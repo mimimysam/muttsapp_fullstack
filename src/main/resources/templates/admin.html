@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Welcome Security with Spring Boot!</title>
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
+
+</head>
+<body>
+
+<div >
+    <div style="float: left; width: 50%; background-color:lightblue">
+
+        <h1>This is Column 1 </h1>
+        <a style="color: blue" th:href="@{/}">Home</a>
+
+    </div>
+
+    <div style="float: right; width: 50%">
+
+        <h1>This is Column 1 </h1>
+        <a style="color: blue" th:href="@{/}">Home</a>
+
+
+
+    </div>
+</div>
+
+
+
+
+	<form th:action="@{/logout}" method="post">
+		<input type="submit" value="Sign Out" />
+	</form>
+</body>
+</html>
