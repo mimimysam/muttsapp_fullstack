@@ -1,13 +1,13 @@
-package com.javasampleapproach.springsecurity.jdbcauthentication;
+package com.muttsapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MySQL_MVC {
+public class MuttsApp {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(MySQL_MVC.class, args);
+		SpringApplication.run(MuttsApp.class, args);
 	}
 }
