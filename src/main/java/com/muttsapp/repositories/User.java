@@ -4,55 +4,46 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(name="user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int user_id;
-//    @Column(columnDefinition = "boolean default 1")
-    int active;
+    int id;
+    @Column(columnDefinition = "boolean default 1")
+    Boolean enabled;
 //    @NotNull
     String email;
 //    @NotNull
-    String first_name;
+    String firstName;
 //    @NotNull
-    String last_name;
+    String lastName;
 //    @NotNull
     String password;
 //    @NotNull
-    String photo_url;
+    String photoUrl;
 //    @NotNull
-    String user_name;
+    String userName;
+    @Column(columnDefinition = "int default 1")
+    int roleId;
 
     public User() {
     }
 
-    public User(int user_id, int active, String email, String first_name, String last_name, String password,
-                String photo_url, String user_name) {
-        this.user_id = user_id;
-        this.active = active;
-        this.email = email;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.password = password;
-        this.photo_url = photo_url;
-        this.user_name = user_name;
+    public int getId() {
+        return id;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public int getActive() {
-        return active;
-    }
-
-    public void setActive(int active) {
-        this.active = active;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getEmail() {
@@ -63,20 +54,20 @@ public class User {
         this.email = email;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {
@@ -87,19 +78,19 @@ public class User {
         this.password = password;
     }
 
-    public String getPhoto_url() {
-        return photo_url;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public void setPhoto_url(String photo_url) {
-        this.photo_url = photo_url;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

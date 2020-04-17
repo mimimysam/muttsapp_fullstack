@@ -1,4 +1,5 @@
-let userID=3;
+//let userID=3;
+let userID=document.getElementById("user_id").value;
 let baseUrl = 'http://demo.codingnomads.co:8082/muttsapp';
 
 //As soon as JS file loads, we run this function to get all the items for the sidebar

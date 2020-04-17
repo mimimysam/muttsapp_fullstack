@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
  
@@ -26,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.usersByUsernameQuery("select username,password,enabled from user where username=?")
 				.authoritiesByUsernameQuery("select u.username, r.role from user u " +
 						"join role r " +
-						"on u.role = r.id " +
+						"on u.roleId = r.role_id " +
 						"where username=?");
 	}
  
@@ -39,9 +40,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.and().formLogin().loginPage("/login").permitAll()
 				.failureUrl("/login?error=true")
 				.and().csrf().disable().formLogin()
-				.defaultSuccessUrl("/home")
+				.defaultSuccessUrl("/index")
 				.and().logout().permitAll();
 
 		http.exceptionHandling().accessDeniedPage("/403");
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web
+				.ignoring()
+				.antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
 	}
 }

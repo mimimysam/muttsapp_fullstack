@@ -1,6 +1,5 @@
 package com.muttsapp.services;
 
-
 import com.muttsapp.repositories.User;
 import com.muttsapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class UserLoginService {
 
     public User saveUser(User user) {
         repo.save(user);
-        return repo.findByFirstNameLastName(user.getFirst_name(), user.getLast_name());
+        return repo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
     }
 
     public User getUserByID (int user_id) {

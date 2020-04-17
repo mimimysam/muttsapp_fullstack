@@ -75,6 +75,11 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>5.2.3.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+			<version>1.9.21</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
 
 	</dependencies>
 

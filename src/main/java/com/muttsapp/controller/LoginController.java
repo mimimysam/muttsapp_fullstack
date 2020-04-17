@@ -17,7 +17,7 @@ import javax.validation.Valid;
 public class LoginController {
 
     @Autowired
-    UserLoginService userLoginService;
+     private UserLoginService userLoginService;
 
     @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
     public String login(){
@@ -50,11 +50,12 @@ public class LoginController {
         }
         return modelAndView;
     }
-    @RequestMapping(value="/admin/index", method = RequestMethod.GET)
+    @RequestMapping(value="/index", method = RequestMethod.GET)
     public String index(Authentication auth, Model model){
-        int user_id = userLoginService.findUserByEmail(auth.getName()).getUser_id();
+        System.out.println(auth.getName());
+        int user_id = userLoginService.findUserByEmail(auth.getName()).getId();
         model.addAttribute("user_id", user_id);
-        return "admin/index";
+        return "index";
     }
 
 }
