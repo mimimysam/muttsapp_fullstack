@@ -1,6 +1,6 @@
 package com.muttsapp.controller;
 
-import com.muttsapp.repositories.User;
+import com.muttsapp.tables.User;
 import com.muttsapp.services.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

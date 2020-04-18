@@ -27,9 +27,9 @@ function previewBoxClick(event) {
 
     // This gets the value of the "data-chat_id" attribute on the clicked element
     console.log(event.target.dataset);
-    let chatID = event.target.dataset.chat_id;
-    let senderID = event.target.dataset.sender_id;
-    document.getElementById('send-message').dataset.chat_id = chatID;
+    let chatID = event.target.dataset.chatId;
+    let senderID = event.target.dataset.senderId;
+    document.getElementById('send-message').dataset.chatId = chatID;
     document.getElementById('new-message').removeAttribute('disabled');
     //The value of "chatID" is passed to this url, to create a dynamically generated API based on which preview box is clicked
     fetch(`${baseUrl}/users/${userID}/chats/` + senderID)
@@ -49,8 +49,8 @@ newMessageForm.addEventListener('submit', function(event){
     event.preventDefault();
     let msg = document.getElementById('new-message').value;
     var msgObj = {
-        sender_id: userID,
-        chat_id: event.target.dataset.chat_id,
+        senderId: userID,
+        chatId: event.target.dataset.chatId,
         message:msg,
     }
     createChatBubble(msgObj);
@@ -89,7 +89,7 @@ const createChatBubble = (msg) => {
     //Create chat bubble wrap and the pargraph that holds the chat message
     let chatBubble = document.createElement('div');
     let sentClassName;
-    if( msg.sender_id === userID ){
+    if( msg.senderId === userID ){
         sentClassName = "out";
     } else {
         sentClassName = "in";
@@ -113,53 +113,53 @@ const createChatBubble = (msg) => {
     //Make Wrapper Div and attach Click listener
     let previewBox = document.createElement('div');
     previewBox.classList.add('message-preview-box');
-    previewBox.setAttribute('data-chat_id', chat.chat_id);
-    previewBox.setAttribute('data-sender_id',chat.sender_id);
+    previewBox.setAttribute('data-chatId', chat.chatId);
+    previewBox.setAttribute('data-senderId',chat.senderId);
     previewBox.addEventListener('click', previewBoxClick);
 
     // make Image wrap, image element, and append to previewWrap
     let imageWrap = document.createElement('div');
-    imageWrap.setAttribute('data-chat_id', chat.chat_id);
-    imageWrap.setAttribute('data-sender_id',chat.sender_id);
+    imageWrap.setAttribute('data-chatId', chat.chatId);
+    imageWrap.setAttribute('data-senderId',chat.senderId);
     imageWrap.classList.add('img-wrap');
 
     let image = document.createElement('img');
-    image.setAttribute('data-chat_id', chat.chat_id);
-    image.setAttribute('data-sender_id',chat.sender_id);
-    image.setAttribute('src', chat.photo_url)
+    image.setAttribute('data-chatId', chat.chatId);
+    image.setAttribute('data-senderId',chat.senderId);
+    image.setAttribute('src', chat.photoUrl)
     image.setAttribute('alt', 'default icon')
     imageWrap.appendChild(image)
     previewBox.appendChild(imageWrap)
 
     //Make text wrap and paragraphs with chat name and last message, and append them to the previewWrap
     let textWrap = document.createElement('div')
-    textWrap.setAttribute('data-chat_id', chat.chat_id);
-    textWrap.setAttribute('data-sender_id',chat.sender_id);
+    textWrap.setAttribute('data-chatId', chat.chatId);
+    textWrap.setAttribute('data-senderId',chat.senderId);
     textWrap.classList.add("message-text-wrap")
 
     let p1 = document.createElement('p')
-    p1.setAttribute('data-chat_id', chat.chat_id);
-    p1.setAttribute('data-sender_id',chat.sender_id);
-    p1.innerHTML = chat.chat_name;
+    p1.setAttribute('data-chatId', chat.chatId);
+    p1.setAttribute('data-senderId',chat.senderId);
+    p1.innerHTML = chat.chatName;
 
     let p2 = document.createElement('p');
-    p2.setAttribute('data-chat_id', chat.chat_id);
-    p2.setAttribute('data-sender_id',chat.sender_id);
-    p2.innerHTML = chat.last_message
+    p2.setAttribute('data-chatId', chat.chatId);
+    p2.setAttribute('data-senderId',chat.senderId);
+    p2.innerHTML = chat.lastMessage
     textWrap.appendChild(p1)
     textWrap.appendChild(p2)
     previewBox.appendChild(textWrap)
 
     //Make date wrap, paragraph with date, and append them to the preview Wrap
     let dateWrap = document.createElement("div");
-    dateWrap.setAttribute('data-chat_id', chat.chat_id);
-    dateWrap.setAttribute('data-sender_id',chat.sender_id);
+    dateWrap.setAttribute('data-chatId', chat.chatId);
+    dateWrap.setAttribute('data-senderId',chat.senderId);
     dateWrap.classList.add("date-wrap");
 
     let dateP = document.createElement('p')
-    dateP.setAttribute('data-chat_id', chat.chat_id);
-    dateP.setAttribute('data-sender_id',chat.sender_id);
-    dateP.innerHTML = new Date(chat.date_sent).toLocaleDateString();
+    dateP.setAttribute('data-chatId', chat.chatId);
+    dateP.setAttribute('data-senderId',chat.senderId);
+    dateP.innerHTML = new Date(chat.dateSent).toLocaleDateString();
     dateWrap.appendChild(dateP)
     previewBox.appendChild(dateWrap)
 

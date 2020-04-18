@@ -1,10 +1,9 @@
 package com.muttsapp.services;
 
-import com.muttsapp.repositories.User;
+import com.muttsapp.tables.User;
 import com.muttsapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -23,16 +22,16 @@ public class UserLoginService {
         return repo.findByFirstNameAndLastName(user.getFirstName(), user.getLastName());
     }
 
-    public User getUserByID (int user_id) {
-        return repo.findById(user_id);
+    public User getUserByID (int userId) {
+        return repo.findByUserId(userId);
     }
 
     public User findUserByEmail(String email) {
         return repo.findByEmail(email);
     }
 
-    public void deleteUser(int user_id) {
-        repo.deleteById(user_id);
+    public void deleteUserId(int userId) {
+        repo.deleteByUserId(userId);
     }
 
 }

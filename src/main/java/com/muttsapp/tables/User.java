@@ -1,4 +1,4 @@
-package com.muttsapp.repositories;
+package com.muttsapp.tables;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    int userId;
     @Column(columnDefinition = "boolean default 1")
     Boolean enabled;
 //    @NotNull
@@ -31,11 +31,11 @@ public class User {
     }
 
     public int getId() {
-        return id;
+        return userId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.userId = userId;
     }
 
     public Boolean getEnabled() {
