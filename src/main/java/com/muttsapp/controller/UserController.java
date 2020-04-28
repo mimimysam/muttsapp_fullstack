@@ -1,13 +1,64 @@
 package com.muttsapp.controller;
 
-import com.muttsapp.tables.User;
+import com.muttsapp.NewMessageException;
+import com.muttsapp.mappers.UserChatMapper;
+import com.muttsapp.model.CustomResponseObject;
+import com.muttsapp.services.ChatService;
+import com.muttsapp.services.UserLoginService;
+import com.muttsapp.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
+    @Autowired
+    UserLoginService userLoginService;
+    @Autowired
+    ChatService chatService;
+
+    @GetMapping()
+    public CustomResponseObject<List<User>> getAllUsers() {
+        CustomResponseObject<List<User>> obj = new CustomResponseObject();
+        obj.setData(userLoginService.getAllUsers());
+        return obj;
+    }
+
+    @GetMapping("/{userId}")
+    public CustomResponseObject<User> findUserById(@PathVariable("userId") int userId) {
+        CustomResponseObject<User> obj = new CustomResponseObject<>();
+        obj.setData(userLoginService.findUserByID(userId));
+        return obj;
+    }
+
+    @GetMapping("/{userId}/chats")
+    public CustomResponseObject<List<UserChat>> findChatsByUserId(@PathVariable("userId") int userId) {
+        CustomResponseObject<List<UserChat>> obj = new CustomResponseObject<>();
+        obj.setData(chatService.getChatsByUserId(userId));
+        return obj;
+    }
+
+    @GetMapping("/{userId}/chats/{otherUserId}")
+    public CustomResponseObject<ArrayList<Message>> getSpecificChatsById(@PathVariable("userId") int userId,
+                                                                         @PathVariable("otherUserId") int otherUserId){
+        CustomResponseObject<ArrayList<Message>> obj = new CustomResponseObject<>();
+        obj.setData(chatService.getSpecificChatsById(userId, otherUserId));
+        return obj;
+    }
+
+    @PostMapping("/{userId}/message")
+    public CustomResponseObject<List<UserChat>> insertNewMessage (
+            @PathVariable("userId") int userId,
+            @RequestBody Message msg) throws NewMessageException {
+        CustomResponseObject<List<UserChat>> obj = new CustomResponseObject<>();
+        chatService.saveMessage(msg);
+        obj.setData(chatService.getChatsByUserId(userId));
+        return obj;
+    }
 
 }

@@ -19,22 +19,26 @@ public class LoginController {
     @Autowired
      private UserLoginService userLoginService;
 
-    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
-    public String login(){
-        return "login";
+    @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
+    public ModelAndView login() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("login");
+        return modelAndView;
     }
 
-    @RequestMapping(value="/registration", method = RequestMethod.GET)
-    public String registration(Model model){
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    public ModelAndView registration() {
+        ModelAndView modelAndView = new ModelAndView();
         User user = new User();
-        model.addAttribute("user", user);
-        return "registration";
+        modelAndView.addObject("user", user);
+        modelAndView.setViewName("registration");
+        return modelAndView;
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
-        User userExists = userLoginService.findUserByEmail(user.getEmail());
+        User userExists = userLoginService.findByEmail(user.getEmail());
         if (userExists != null) {
             bindingResult
                     .rejectValue("email", "error.user",
@@ -50,11 +54,13 @@ public class LoginController {
         }
         return modelAndView;
     }
+
     @RequestMapping(value="/index", method = RequestMethod.GET)
     public String index(Authentication auth, Model model){
         System.out.println(auth.getName());
-        int user_id = userLoginService.findUserByEmail(auth.getName()).getId();
-        model.addAttribute("user_id", user_id);
+        String temp = auth.getName();
+        int userId = userLoginService.findUserByUserName(temp).getId();
+        model.addAttribute("userId", userId);
         return "index";
     }
 

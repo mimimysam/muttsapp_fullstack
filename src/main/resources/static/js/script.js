@@ -1,18 +1,20 @@
-//let userID=3;
-let userID=document.getElementById("user_id").value;
-let baseUrl = 'http://demo.codingnomads.co:8082/muttsapp';
+let userID=document.getElementById("userId").value;
+let baseUrl = '/users';
 
 //As soon as JS file loads, we run this function to get all the items for the sidebar
 function getUserChats() {
     document.getElementById('message-wrapper').innerHTML = ""
-    fetch(`${baseUrl}/users/${userID}/chats/`)
+    fetch(`${baseUrl}/${userID}/chats/`)
         //The info retrieved in the fetch request returns a response object.
         //The response object is assigned to the parameter in the following method as "response"
         .then(response => response.json())
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
 
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles preview box creation
-        .then(dataObj => createPreviewBoxes(dataObj))
+        .then(dataObj => {
+            console.log(dataObj)
+            createPreviewBoxes(dataObj)
+        })
 };
 getUserChats();
 
@@ -27,12 +29,13 @@ function previewBoxClick(event) {
 
     // This gets the value of the "data-chat_id" attribute on the clicked element
     console.log(event.target.dataset);
-    let chatID = event.target.dataset.chatId;
-    let senderID = event.target.dataset.senderId;
-    document.getElementById('send-message').dataset.chatId = chatID;
+    let chatID = previewWrap.dataset.chatid;
+    let senderID = previewWrap.dataset.senderid;
+    console.log(senderID)
+    document.getElementById('send-message').dataset.chatid = chatID;
     document.getElementById('new-message').removeAttribute('disabled');
     //The value of "chatID" is passed to this url, to create a dynamically generated API based on which preview box is clicked
-    fetch(`${baseUrl}/users/${userID}/chats/` + senderID)
+    fetch(`${baseUrl}/${userID}/chats/` + senderID)
          //The info retrieved in the fetch request returns a response object.
          //The response object is assigned to the parameter in the following method as "response"
         .then(response => response.json())
@@ -49,8 +52,8 @@ newMessageForm.addEventListener('submit', function(event){
     event.preventDefault();
     let msg = document.getElementById('new-message').value;
     var msgObj = {
-        senderId: userID,
-        chatId: event.target.dataset.chatId,
+        userId: userID,
+        chatId: event.target.dataset.chatid,
         message:msg,
     }
     createChatBubble(msgObj);
@@ -89,7 +92,7 @@ const createChatBubble = (msg) => {
     //Create chat bubble wrap and the pargraph that holds the chat message
     let chatBubble = document.createElement('div');
     let sentClassName;
-    if( msg.senderId === userID ){
+    if( msg.userId === +userID ){
         sentClassName = "out";
     } else {
         sentClassName = "in";
@@ -119,32 +122,22 @@ const createChatBubble = (msg) => {
 
     // make Image wrap, image element, and append to previewWrap
     let imageWrap = document.createElement('div');
-    imageWrap.setAttribute('data-chatId', chat.chatId);
-    imageWrap.setAttribute('data-senderId',chat.senderId);
     imageWrap.classList.add('img-wrap');
 
     let image = document.createElement('img');
-    image.setAttribute('data-chatId', chat.chatId);
-    image.setAttribute('data-senderId',chat.senderId);
-    image.setAttribute('src', chat.photoUrl)
+    image.setAttribute('src', chat.photoUrl ? chat.photoUrl : "./images/defaultIcon.svg")
     image.setAttribute('alt', 'default icon')
     imageWrap.appendChild(image)
     previewBox.appendChild(imageWrap)
 
     //Make text wrap and paragraphs with chat name and last message, and append them to the previewWrap
     let textWrap = document.createElement('div')
-    textWrap.setAttribute('data-chatId', chat.chatId);
-    textWrap.setAttribute('data-senderId',chat.senderId);
     textWrap.classList.add("message-text-wrap")
 
     let p1 = document.createElement('p')
-    p1.setAttribute('data-chatId', chat.chatId);
-    p1.setAttribute('data-senderId',chat.senderId);
     p1.innerHTML = chat.chatName;
 
     let p2 = document.createElement('p');
-    p2.setAttribute('data-chatId', chat.chatId);
-    p2.setAttribute('data-senderId',chat.senderId);
     p2.innerHTML = chat.lastMessage
     textWrap.appendChild(p1)
     textWrap.appendChild(p2)
@@ -152,13 +145,9 @@ const createChatBubble = (msg) => {
 
     //Make date wrap, paragraph with date, and append them to the preview Wrap
     let dateWrap = document.createElement("div");
-    dateWrap.setAttribute('data-chatId', chat.chatId);
-    dateWrap.setAttribute('data-senderId',chat.senderId);
     dateWrap.classList.add("date-wrap");
 
     let dateP = document.createElement('p')
-    dateP.setAttribute('data-chatId', chat.chatId);
-    dateP.setAttribute('data-senderId',chat.senderId);
     dateP.innerHTML = new Date(chat.dateSent).toLocaleDateString();
     dateWrap.appendChild(dateP)
     previewBox.appendChild(dateWrap)
@@ -167,6 +156,20 @@ const createChatBubble = (msg) => {
     let messageWrap = document.getElementById("message-wrapper")
     messageWrap.appendChild(previewBox)
  }
+
+// let sendMessage = document.getElementById('send-message');
+// sendMessage.addEventListener('submit', function(event){
+//     event.preventDefault();
+//     let msg = document.getElementById('new-message').value;
+//     let messageObj = {
+//         message:msg,
+//         userId:userID,
+//         chatId:+event.target.dataset.chatId
+//     }
+//     createChatBubble(messageObj);
+//     sendNewMessage(messageObj);
+//     document.getElementById("new-message").value = " ";
+// });
 
  /*
  * Our first post request example
@@ -181,10 +184,59 @@ function sendNewMessage(msgObj) {
        },
        body: JSON.stringify(msgObj)
     }
-    fetch(`${baseUrl}/users/${userID}/chat/`, postParams)
+    console.log(msgObj)
+    fetch(`${baseUrl}/${userID}/message`, postParams)
         .then(res => res.json())
         .then(res => {
             console.log(res);
             return getUserChats();
     });
+}
+
+let newChatBtn = document.getElementById('new-chat-btn');
+let newChatModalBody = document.getElementById('new-chat-modal-body');
+newChatBtn.addEventListener('click', makeNewChatForm);
+
+function makeNewChatForm(e) {
+    newChatModalBody.innerHTML = "Loading Chat Form";
+    fetch(`${baseUrl}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            let usersArray = data.data;
+            let frm = document.createElement('form');
+            frm.id = `new-chat-frm`;
+            let formString = ``;
+            formString += `<input id="new-chat-user" type="text" list="users-list" class="form-control">`;
+            formString += `<datalist id="users-list">`
+            usersArray.forEach(userObj => {
+                formString += `<option data-value="${userObj.id}" value="${userObj.firstName} ${userObj.lastName}"></option> `
+            })
+            formString += `</datalist>`
+            formString += `<input type="submit" class="btn btn-success">`
+            frm.innerHTML = formString;
+            frm.addEventListener('submit', newChatSubmit)
+            newChatModalBody.innerHTML = "";
+            newChatModalBody.appendChild(frm);
+        })
+}
+
+function newChatSubmit(e){
+    e.preventDefault()
+    let options = document.getElementById('users-list').options;
+    console.log(document.getElementById('users-list').options)
+    console.log(e.target.elements)
+    let val = e.target.elements["new-chat-user"].value
+    console.log(val)
+    let newChatUserId;
+    Array.from(options).forEach(option => {
+        if (option.value === val) {
+            newChatUserId = option.getAttribute('data-value');
+        }
+    })
+    console.log(newChatUserId)
+
+    fetch(baseUrl + "/" + senderID)
+    .then(response => response.json())
+
 }

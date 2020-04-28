@@ -1,7 +1,13 @@
 package com.muttsapp.tables;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name="message")
 public class Message {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
     String message;
     String dateSent;

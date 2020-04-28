@@ -2,6 +2,7 @@ package com.muttsapp.tables;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
 @Table(name="user")
@@ -24,8 +25,9 @@ public class User {
     String photoUrl;
 //    @NotNull
     String userName;
-    @Column(columnDefinition = "int default 1")
-    int roleId;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "userRole", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "roleId"))
+    private Set<Role> roles;
 
     public User() {
     }
@@ -92,5 +94,21 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

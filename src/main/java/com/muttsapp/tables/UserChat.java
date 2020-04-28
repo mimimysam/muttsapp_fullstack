@@ -1,5 +1,8 @@
 package com.muttsapp.tables;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 public class UserChat {
 
     String chatName;
@@ -21,20 +24,20 @@ public class UserChat {
         this.photoUrl = photoUrl;
     }
 
-    public String getChatName() {
-        return chatName;
-    }
-
-    public void setChatName(String chatName) {
-        this.chatName = chatName;
-    }
-
     public int getChatId() {
         return chatId;
     }
 
     public void setChatId(int chatId) {
         this.chatId = chatId;
+    }
+
+    public String getChatName() {
+        return chatName;
+    }
+
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
     }
 
     public String getLastMessage() {

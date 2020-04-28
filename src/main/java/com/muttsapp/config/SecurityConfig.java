@@ -11,7 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
- 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Configuration
 @EnableAutoConfiguration
 //@EnableJpaRepositories("com.muttsapp.repositories")
@@ -20,7 +21,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
  
 	@Autowired
 	DataSource dataSource;
- 
+
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	@Autowired
 	public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
 		auth.jdbcAuthentication().dataSource(dataSource)
@@ -28,13 +32,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authoritiesByUsernameQuery("select u.username, r.role from user u " +
 						"join role r " +
 						"on u.roleId = r.roleId " +
-						"where username=?");
+						"where username=?")
+				.passwordEncoder(bCryptPasswordEncoder);
 	}
  
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/", "/home","/users").permitAll()
+				.antMatchers("/", "/home","/users/**","/registration").permitAll()
 //				.antMatchers("/users").hasRole("USER")
 				.anyRequest().authenticated()
 				.and().formLogin().loginPage("/login").permitAll()

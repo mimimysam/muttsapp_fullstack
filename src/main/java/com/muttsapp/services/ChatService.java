@@ -1,13 +1,14 @@
 package com.muttsapp.services;
 
+import com.muttsapp.NewMessageException;
 import com.muttsapp.mappers.UserChatMapper;
+import com.muttsapp.mappers.UserMapper;
 import com.muttsapp.repositories.ChatRepository;
-import com.muttsapp.tables.Chat;
-import com.muttsapp.tables.User;
-import com.muttsapp.tables.UserChat;
+import com.muttsapp.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,20 +20,43 @@ public class ChatService {
     @Autowired
     UserChatMapper userChatMapper;
 
+    @Autowired
+    UserMapper userMapper;
+
     public List<UserChat> getChatsByUserId(int userId) {
-        return userChatMapper.getChatsByUserId(userId);
+        List<UserChat> chats = userChatMapper.getChatsByUserId(userId);
+
+        for (UserChat u : chats) {
+            u.setPhotoUrl(userChatMapper.getPhotoUrl(u.getSenderId()));
+            Message m = userChatMapper.getLastMessage(u.getChatId());
+            u.setLastMessage(m.getMessage());
+            u.setDateSent(m.getDateSent());
+        }
+        return chats;
     }
 
-    public Chat getChatByChatId(int chatId) {
-        return repo.findByChatId(chatId);
+    public ArrayList<Message> getSpecificChatsById(long userId, long otherUserId) {
+        int chatId = userChatMapper.getChatIdByUserIds(userId, otherUserId);
+        return userChatMapper.findMessagesByChatId(chatId);
     }
 
-    public void saveChat(Chat chat) {
-        repo.save(chat);
-    }
+//    public void createNewChat(int userId, int otherUserId) throws NewMessageException {
+//        // creating list of strings of the first names of the 2 users involved in this new chat
+//        ArrayList<String> names = userMapper.getUserFirstNames(userId, otherUserId);
+//        // this becomes the new chatTitle in the `chats` table
+//        String title = names.get(0) + " & " + names.get(1);
+//        // inserts this new chatTitle into the `chats` table thereby creating the new row
+//        // the chatId is automatically created because of the auto increment
+//        userChatMapper.createNewChat(title);
+//        // determine chatId using the title
+//        int chatId = userChatMapper.selectChatIdByChatTitle(title);
+//        // associate chatIds with both users
+//        userChatMapper.updateUserChats(userId, chatId);
+//        userChatMapper.updateUserChats(otherUserId, chatId);
+//    }
 
-    public void deleteChat(int chatId) {
-        repo.deleteByChatId(chatId);
+    public void saveMessage(Message msg) throws NewMessageException {
+        userChatMapper.saveMessage(msg);
     }
 
 }

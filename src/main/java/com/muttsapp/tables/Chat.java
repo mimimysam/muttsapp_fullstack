@@ -38,4 +38,5 @@ public class Chat {
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
+
 }

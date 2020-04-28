@@ -6,16 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mutts App</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
 </head>
 
 <body>
-<input type="hidden" th:value="${user_id}" id="user_id">
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New chat</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="new-chat-modal-body" class="modal-body">
+                ...loading
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" th:value="${userId}" id="userId">
 <header>
     <div id="header-sidebar">
 
         <div id="self-image" class="img-wrap">
-            <img src="./images/pup6.png" alt="My icon image">
+            <img th:src="@{images/pup1.jpg}" alt="My icon image">
         </div>
         <div id="header-sidebar-icons">
             <ul>
@@ -30,7 +47,7 @@
                     </button>
                 </li>
                 <li>
-                    <button class="svg-wrap">
+                    <button class="svg-wrap" id="new-chat-btn" data-toggle="modal" data-target="#exampleModal">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                             <path fill="currentColor"
                                   d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z">
@@ -54,7 +71,7 @@
     <div id="header-main">
 
         <div id="recipient-image" class="img-wrap">
-            <img src="./images/pup3.png" alt="recipient icon image">
+            <img th:src="@{images/pup3.png}" alt="recipient icon image">
         </div>
         <div id="chat-name">
             <p>chat name</p>
@@ -126,6 +143,9 @@
     </div>
 </div>
 <script th:src="@{/js/script.js}"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 
 </html>
