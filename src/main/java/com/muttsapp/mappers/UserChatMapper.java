@@ -15,16 +15,11 @@ import java.util.List;
 @Mapper
 public interface UserChatMapper {
 
-    String GET_CHATS_BY_USER_ID = "select distinct(c.chatTitle) as chatName, c.chatId, m.dateSent, " +
-            "m.userId as senderId " +
-            "from chat c " +
-            "join message m " +
-            "on m.chatId = c.chatId " +
-            "join userChat uc " +
-            "on uc.chatId = c.chatId " +
-            "where uc.userId = #{userId} " +
-            "and m.userId != #{userId} " +
-            "group by chatId, senderId ";
+    String GET_CHATS_BY_USER_ID = "select distinct(c.chatTitle) as chatName, c.chatId as chatId, m.maxDateSent, " +
+            "m2.userId as senderId from chat c join ( select chatId, max(dateSent) as maxDateSent from message " +
+            "group by chatId ) m on c.chatId = m.chatId join message m2 on m.maxDateSent = m2.dateSent " +
+            "and m.chatId = m2.chatId join userChat uc on uc.chatId = m.chatId where uc.userId = #{userId} " +
+            "order by m2.dateSent desc";
 
     String GET_LAST_MESSAGE = "select * from message where chatid = #{chatId} " +
             "order by id desc limit 1";
@@ -56,6 +51,11 @@ public interface UserChatMapper {
     String SAVE_MESSAGE = "INSERT INTO `MuttsApp`.`message` (`message`, `chatId`, `userId`) VALUES (#{message}, " +
             "#{chatId}, #{userId})";
 
+    String GET_OTHER_USER_ID = "SELECT uc2.userId " +
+            "FROM userChat uc1 " +
+            "JOIN userChat uc2 ON uc1.chatId = uc2.chatId AND uc1.userId != uc2.userId " +
+            "WHERE uc1.userId = #{param1} AND uc1.chatId = #{param2}";
+
 //    String CREATE_NEW_CHAT = "insert into `MuttsApp`.chat (chatTitle) " +
 //            "VALUES (#{chatTitle})";
 
@@ -80,10 +80,13 @@ public interface UserChatMapper {
     public int selectChatIdByChatTitle(String chatTitle);
 
     @Select(GET_CHAT_ID_BY_USER_IDS)
-    int getChatIdByUserIds(long userId, long otherUserId);
+    int getChatIdByUserIds(int userId, int otherUserId);
 
     @Insert(SAVE_MESSAGE)
     void saveMessage(Message msg);
+
+    @Select(GET_OTHER_USER_ID)
+    public int getOtherUserId(int userId, int chatId);
 
 //    @Insert(CREATE_NEW_CHAT)
 //    int createNewChat(String chatTitle);

@@ -1,15 +1,15 @@
-let userID=document.getElementById("userId").value;
+let userId=document.getElementById("userId").value;
 let baseUrl = '/users';
+let savedUserChats = [];
 
 //As soon as JS file loads, we run this function to get all the items for the sidebar
 function getUserChats() {
     document.getElementById('message-wrapper').innerHTML = ""
-    fetch(`${baseUrl}/${userID}/chats/`)
+    fetch(`${baseUrl}/${userId}/chats/`)
         //The info retrieved in the fetch request returns a response object.
         //The response object is assigned to the parameter in the following method as "response"
         .then(response => response.json())
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
-
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles preview box creation
         .then(dataObj => {
             console.log(dataObj)
@@ -17,49 +17,6 @@ function getUserChats() {
         })
 };
 getUserChats();
-
-function previewBoxClick(event) {
-    let previewWrap = event.target.closest('.message-preview-box');
-    let previewImg = previewWrap.querySelector('.img-wrap img');
-    let chatName = previewWrap.querySelector('.message-text-wrap p');
-    let headerImg = document.querySelector('#recipient-image  img');
-    let headerName = document.getElementById('chat-name');
-    headerImg.src = previewImg.src;
-    headerName.innerHTML = chatName.innerHTML;
-
-    // This gets the value of the "data-chat_id" attribute on the clicked element
-    console.log(event.target.dataset);
-    let chatID = previewWrap.dataset.chatid;
-    let senderID = previewWrap.dataset.senderid;
-    console.log(senderID)
-    document.getElementById('send-message').dataset.chatid = chatID;
-    document.getElementById('new-message').removeAttribute('disabled');
-    //The value of "chatID" is passed to this url, to create a dynamically generated API based on which preview box is clicked
-    fetch(`${baseUrl}/${userID}/chats/` + senderID)
-         //The info retrieved in the fetch request returns a response object.
-         //The response object is assigned to the parameter in the following method as "response"
-        .then(response => response.json())
-        //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
-
-        // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
-        .then(dataObj => {
-            console.log(dataObj);
-            createChatBubbles(dataObj)})}
-
-//Attach a "submit" listener to the message form
-let newMessageForm = document.getElementById('send-message')
-newMessageForm.addEventListener('submit', function(event){
-    event.preventDefault();
-    let msg = document.getElementById('new-message').value;
-    var msgObj = {
-        userId: userID,
-        chatId: event.target.dataset.chatid,
-        message:msg,
-    }
-    createChatBubble(msgObj);
-    sendNewMessage(msgObj)
-    document.getElementById('new-message').value = "";
-});
 
 /*  ===============
 
@@ -74,8 +31,42 @@ function createChatBubbles(dataObj) {
 
 function createPreviewBoxes(dataObj){
     let chatsArr = dataObj.data;
-    chatsArr.forEach(chat => createPreviewBox(chat))
+//    let sorted = chatsArr.sort((a, b) => new Date(b.dateSent) - new Date(a.dateSent))
+    chatsArr.forEach(chat => {
+        savedUserChats.push(chat)
+        createPreviewBox(chat)
+    })
 }
+
+function previewBoxClick(event) {
+    let previewWrap = event.target.closest('.message-preview-box');
+    let previewImg = previewWrap.querySelector('.img-wrap img');
+    let chatName = previewWrap.querySelector('.message-text-wrap p');
+    let headerImg = document.querySelector('#recipient-image  img');
+    let headerName = document.getElementById('chat-name');
+    headerImg.src = previewImg.src;
+    headerName.innerHTML = chatName.innerHTML;
+
+    let chatID = previewWrap.dataset.chatid;
+    let senderID = previewWrap.dataset.senderid;
+    let otherUserId = previewWrap.dataset.otheruserid;
+    document.getElementById('send-message').dataset.chatid = chatID;
+    document.getElementById('new-message').removeAttribute('disabled');
+    getChatMessages(otherUserId)
+    }
+
+function getChatMessages(senderID){
+    fetch(`${baseUrl}/${userId}/chats/` + senderID)
+         //The info retrieved in the fetch request returns a response object.
+         //The response object is assigned to the parameter in the following method as "response"
+        .then(response => response.json())
+        //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
+
+        // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
+        .then(dataObj => {
+            console.log(dataObj);
+            createChatBubbles(dataObj)})
+    }
 
 /*  ===============
 
@@ -92,7 +83,7 @@ const createChatBubble = (msg) => {
     //Create chat bubble wrap and the pargraph that holds the chat message
     let chatBubble = document.createElement('div');
     let sentClassName;
-    if( msg.userId === +userID ){
+    if( msg.userId === +userId ){
         sentClassName = "out";
     } else {
         sentClassName = "in";
@@ -103,7 +94,6 @@ const createChatBubble = (msg) => {
     chatBubble.appendChild(paragraph);
     //Append the created elements to the page
     let wrapper = document.getElementById('chat-bubble-wrapper');
-
     wrapper.prepend(chatBubble);
 }
 
@@ -118,6 +108,7 @@ const createChatBubble = (msg) => {
     previewBox.classList.add('message-preview-box');
     previewBox.setAttribute('data-chatId', chat.chatId);
     previewBox.setAttribute('data-senderId',chat.senderId);
+    previewBox.setAttribute('data-otherUserId',chat.otherUserId);
     previewBox.addEventListener('click', previewBoxClick);
 
     // make Image wrap, image element, and append to previewWrap
@@ -157,19 +148,34 @@ const createChatBubble = (msg) => {
     messageWrap.appendChild(previewBox)
  }
 
-// let sendMessage = document.getElementById('send-message');
-// sendMessage.addEventListener('submit', function(event){
+ //Attach a "submit" listener to the message form
+// let newMessageForm = document.getElementById('send-message')
+// newMessageForm.addEventListener('submit', function(event){
 //     event.preventDefault();
 //     let msg = document.getElementById('new-message').value;
-//     let messageObj = {
+//     var msgObj = {
+//         userId: userId,
+//         chatId: event.target.dataset.chatid,
 //         message:msg,
-//         userId:userID,
-//         chatId:+event.target.dataset.chatId
 //     }
-//     createChatBubble(messageObj);
-//     sendNewMessage(messageObj);
-//     document.getElementById("new-message").value = " ";
+//     createChatBubble(msgObj);
+//     sendNewMessage(msgObj)
+//     document.getElementById('new-message').value = "";
 // });
+
+ let sendMessage = document.getElementById('send-message');
+ sendMessage.addEventListener('submit', function(event){
+     event.preventDefault();
+     let msg = document.getElementById('new-message').value;
+     let msgObj = {
+         userId:+userId,
+         chatId:+(event.target.dataset.chatid),
+         message:msg,
+     }
+     createChatBubble(msgObj);
+     sendNewMessage(msgObj);
+     document.getElementById("new-message").value = " ";
+ });
 
  /*
  * Our first post request example
@@ -183,12 +189,10 @@ function sendNewMessage(msgObj) {
            'Access-Control-Allow-Origin':'*'
        },
        body: JSON.stringify(msgObj)
-    }
-    console.log(msgObj)
-    fetch(`${baseUrl}/${userID}/message`, postParams)
+    };
+    fetch(`${baseUrl}/${userId}/message`, postParams)
         .then(res => res.json())
         .then(res => {
-            console.log(res);
             return getUserChats();
     });
 }
@@ -232,11 +236,18 @@ function newChatSubmit(e){
     Array.from(options).forEach(option => {
         if (option.value === val) {
             newChatUserId = option.getAttribute('data-value');
+            console.log(savedUserChats)
+            console.log(newChatUserId)
+            savedUserChats.forEach(chat => {
+                if (+newChatUserId === chat.otherUserId) {
+                   getChatMessages(newChatUserId)
+                }
+            })
         }
     })
     console.log(newChatUserId)
 
-    fetch(baseUrl + "/" + senderID)
-    .then(response => response.json())
+//    fetch(baseUrl + "/" + senderID)
+//    .then(response => response.json())
 
 }

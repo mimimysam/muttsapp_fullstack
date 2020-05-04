@@ -23,19 +23,22 @@ public class ChatService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    UserLoginService userLoginService;
+
     public List<UserChat> getChatsByUserId(int userId) {
         List<UserChat> chats = userChatMapper.getChatsByUserId(userId);
-
         for (UserChat u : chats) {
-            u.setPhotoUrl(userChatMapper.getPhotoUrl(u.getSenderId()));
             Message m = userChatMapper.getLastMessage(u.getChatId());
             u.setLastMessage(m.getMessage());
             u.setDateSent(m.getDateSent());
+            u.setOtherUserId(userChatMapper.getOtherUserId(userId, u.getChatId()));
+            u.setPhotoUrl(userChatMapper.getPhotoUrl(u.getOtherUserId()));
         }
         return chats;
     }
 
-    public ArrayList<Message> getSpecificChatsById(long userId, long otherUserId) {
+    public ArrayList<Message> getSpecificChatsById(int userId, int otherUserId) {
         int chatId = userChatMapper.getChatIdByUserIds(userId, otherUserId);
         return userChatMapper.findMessagesByChatId(chatId);
     }

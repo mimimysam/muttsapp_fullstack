@@ -9,17 +9,19 @@ public class UserChat {
     int chatId;
     String lastMessage;
     int senderId;
+    int otherUserId;
     String dateSent;
     String photoUrl;
 
     public UserChat() {
     }
 
-    public UserChat(String chatName, int chatId, String lastMessage, int senderId, String dateSent, String photoUrl) {
+    public UserChat(String chatName, int chatId, String lastMessage, int senderId, int otherUserId, String dateSent, String photoUrl) {
         this.chatName = chatName;
         this.chatId = chatId;
         this.lastMessage = lastMessage;
         this.senderId = senderId;
+        this.otherUserId = otherUserId;
         this.dateSent = dateSent;
         this.photoUrl = photoUrl;
     }
@@ -54,6 +56,14 @@ public class UserChat {
 
     public void setSenderId(int senderId) {
         this.senderId = senderId;
+    }
+
+    public int getOtherUserId() {
+        return otherUserId;
+    }
+
+    public void setOtherUserId(int otherUserId) {
+        this.otherUserId = otherUserId;
     }
 
     public String getDateSent() {
