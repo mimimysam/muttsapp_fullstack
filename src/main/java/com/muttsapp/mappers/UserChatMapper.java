@@ -3,6 +3,7 @@ package com.muttsapp.mappers;
 import com.muttsapp.tables.Message;
 import com.muttsapp.tables.SpecificChat;
 import com.muttsapp.tables.UserChat;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -40,7 +41,7 @@ public interface UserChatMapper {
             "where c.chatId = #{chatId} " +
             "order by m.dateSent asc";
 
-    String SELECT_CHAT_ID_BY_CHAT_TITLE = "select chatId from chats where chatTitle = #{chatTitle}";
+    String SELECT_CHAT_ID_BY_CHAT_TITLE = "select chatId from chat where chatTitle = #{chatTitle}";
 
     String GET_CHAT_ID_BY_USER_IDS = "select uc.chatId from userChat uc where uc.userId = #{param1} " +
             "or uc.userId = #{param2} " +
@@ -56,10 +57,11 @@ public interface UserChatMapper {
             "JOIN userChat uc2 ON uc1.chatId = uc2.chatId AND uc1.userId != uc2.userId " +
             "WHERE uc1.userId = #{param1} AND uc1.chatId = #{param2}";
 
-//    String CREATE_NEW_CHAT = "insert into `MuttsApp`.chat (chatTitle) " +
-//            "VALUES (#{chatTitle})";
+    String CREATE_NEW_CHAT = "insert into chat (chatTitle) VALUES (#{chatTitle})";
 
-//    String UPDATE_USER_CHATS = "insert into `MuttsApp`.userChat (userId, chatId) VALUES (#{param1}, #{param2})";
+    String UPDATE_USER_CHATS = "insert into `MuttsApp`.userChat (userId, chatId) VALUES (#{param1}, #{param2})";
+
+    String DELETE_MESSAGE = "DELETE FROM `MuttsApp`.`message` WHERE (`id` = '#{id}')";
 
     @Select(GET_CHATS_BY_USER_ID)
     public List<UserChat> getChatsByUserId(int userId);
@@ -88,10 +90,13 @@ public interface UserChatMapper {
     @Select(GET_OTHER_USER_ID)
     public int getOtherUserId(int userId, int chatId);
 
-//    @Insert(CREATE_NEW_CHAT)
-//    int createNewChat(String chatTitle);
+    @Insert(CREATE_NEW_CHAT)
+    int createNewChat(String chatTitle);
 
-//    @Insert(UPDATE_USER_CHATS)
-//    void updateUserChats(int userId, int chatId);
+    @Insert(UPDATE_USER_CHATS)
+    void updateUserChats(int userId, int chatId);
+
+    @Delete(DELETE_MESSAGE)
+    void deleteMessage(int id);
 
 }

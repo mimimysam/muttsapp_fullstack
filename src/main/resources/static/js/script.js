@@ -2,6 +2,24 @@ let userId=document.getElementById("userId").value;
 let baseUrl = '/users';
 let savedUserChats = [];
 
+function getUserImg() {
+    fetch(`${baseUrl}/${userId}/`)
+    .then(response => response.json())
+        .then(userObj => {
+            let selfImage = document.querySelector('#self-image img');
+            selfImage.setAttribute('src', userObj.data.photoUrl ? userObj.data.photoUrl : "./images/defaultIcon.svg");
+            selfImage.setAttribute('alt', 'user image');
+        })
+}
+getUserImg();
+
+let logoutBtn = document.getElementById('logout-btn');
+logoutBtn.addEventListener('click', logout);
+
+function logout(e) {
+    location.replace("http://localhost:8080/logout")
+}
+
 //As soon as JS file loads, we run this function to get all the items for the sidebar
 function getUserChats() {
     document.getElementById('message-wrapper').innerHTML = ""
@@ -12,7 +30,6 @@ function getUserChats() {
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles preview box creation
         .then(dataObj => {
-            console.log(dataObj)
             createPreviewBoxes(dataObj)
         })
 };
@@ -42,7 +59,7 @@ function previewBoxClick(event) {
     let previewWrap = event.target.closest('.message-preview-box');
     let previewImg = previewWrap.querySelector('.img-wrap img');
     let chatName = previewWrap.querySelector('.message-text-wrap p');
-    let headerImg = document.querySelector('#recipient-image  img');
+    let headerImg = document.querySelector('#recipient-image img');
     let headerName = document.getElementById('chat-name');
     headerImg.src = previewImg.src;
     headerName.innerHTML = chatName.innerHTML;
@@ -64,7 +81,6 @@ function getChatMessages(senderID){
 
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
         .then(dataObj => {
-            console.log(dataObj);
             createChatBubbles(dataObj)})
     }
 
@@ -95,7 +111,18 @@ const createChatBubble = (msg) => {
     //Append the created elements to the page
     let wrapper = document.getElementById('chat-bubble-wrapper');
     wrapper.prepend(chatBubble);
+    if (sentClassName === "out") {
+        chatBubble.setAttribute('data-toggle', 'modal');
+        chatBubble.setAttribute('data-target', '#deleteMessageModal');
+//        chatBubble.addEventListener('click', deleteMessage);
+    }
 }
+
+//function deleteMessage(event) {
+//    chatBubble.setAttribute('data-toggle', 'modal');
+//    chatBubble.setAttribute('data-target', '#myModal');
+//    chatBubble.setAttribute('title', 'Delete message');
+//}
 
 /*
 * This function creates a single "Chat Preview Box" (an individual sidebar item and its children)
@@ -148,21 +175,6 @@ const createChatBubble = (msg) => {
     messageWrap.appendChild(previewBox)
  }
 
- //Attach a "submit" listener to the message form
-// let newMessageForm = document.getElementById('send-message')
-// newMessageForm.addEventListener('submit', function(event){
-//     event.preventDefault();
-//     let msg = document.getElementById('new-message').value;
-//     var msgObj = {
-//         userId: userId,
-//         chatId: event.target.dataset.chatid,
-//         message:msg,
-//     }
-//     createChatBubble(msgObj);
-//     sendNewMessage(msgObj)
-//     document.getElementById('new-message').value = "";
-// });
-
  let sendMessage = document.getElementById('send-message');
  sendMessage.addEventListener('submit', function(event){
      event.preventDefault();
@@ -206,7 +218,6 @@ function makeNewChatForm(e) {
     fetch(`${baseUrl}`)
         .then(res => res.json())
         .then(data => {
-            console.log(data);
             let usersArray = data.data;
             let frm = document.createElement('form');
             frm.id = `new-chat-frm`;
@@ -228,26 +239,68 @@ function makeNewChatForm(e) {
 function newChatSubmit(e){
     e.preventDefault()
     let options = document.getElementById('users-list').options;
-    console.log(document.getElementById('users-list').options)
-    console.log(e.target.elements)
     let val = e.target.elements["new-chat-user"].value
-    console.log(val)
     let newChatUserId;
+    let found = false;
     Array.from(options).forEach(option => {
         if (option.value === val) {
             newChatUserId = option.getAttribute('data-value');
-            console.log(savedUserChats)
             console.log(newChatUserId)
             savedUserChats.forEach(chat => {
                 if (+newChatUserId === chat.otherUserId) {
-                   getChatMessages(newChatUserId)
+                    let headerImg = document.querySelector('#recipient-image img');
+                    let headerName = document.getElementById('chat-name');
+                    headerImg.src = chat.photoUrl;
+                    headerName.innerHTML = chat.chatName;
+                    document.getElementById('send-message').dataset.chatid = chat.chatId;
+                    getChatMessages(newChatUserId);
+                    found = true;
                 }
             })
+            if (found === false) {
+                document.getElementById('chat-bubble-wrapper').innerHTML = ""
+                createNewChat(userId, newChatUserId);
+            }
         }
     })
-    console.log(newChatUserId)
-
-//    fetch(baseUrl + "/" + senderID)
-//    .then(response => response.json())
-
+    closeOneModal()
 }
+
+function createNewChat(userId, newChatUserId) {
+    let postParams = {
+       method: 'POST', // *GET, POST, PUT, DELETE, etc.
+       headers: {
+           'Content-Type': 'application/json; charset=UTF-8',
+           'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+           'Access-Control-Allow-Origin':'*'
+       },
+       body: JSON.stringify()
+    };
+    console.log(userId);
+    console.log(newChatUserId);
+    fetch(`${baseUrl}/${userId}/chats/${newChatUserId}` , postParams)
+        .then(res => res.json())
+        .then(newChatObj => {
+            console.log(newChatObj)
+            createPreviewBox(newChatObj);
+            let headerImg = document.querySelector('#recipient-image img');
+            let headerName = document.getElementById('chat-name');
+            headerImg.src = newChatObj.photoUrl;
+            headerName.innerHTML = newChatObj.chatName;
+            document.getElementById('send-message').dataset.chatid = newChatObj.chatId;
+    });
+}
+
+function closeOneModal(exampleModal) {
+    // get modal
+    const modal = document.getElementById('exampleModal');
+    // change state like in hidden modal
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('style', 'display: none');
+     // get modal backdrop
+     const modalBackdrops = document.getElementsByClassName('modal-backdrop');
+     // remove opened modal backdrop
+      document.body.removeChild(modalBackdrops[0]);
+  }
+

@@ -50,6 +50,17 @@ public class UserController {
         return obj;
     }
 
+    @PostMapping("/{userId}/chats/{otherUserId}")
+    public CustomResponseObject<List<UserChat>> createNewChat(
+            @PathVariable("userId") int userId,
+            @PathVariable("otherUserId") int otherUserId) throws NewMessageException {
+        CustomResponseObject<List<UserChat>> obj = new CustomResponseObject<>();
+        // creating new chat with the two users
+        chatService.createNewChat(userId, otherUserId);
+        obj.setData(chatService.getChatsByUserId(userId));
+        return obj;
+    }
+
     @PostMapping("/{userId}/message")
     public CustomResponseObject<List<UserChat>> insertNewMessage (
             @PathVariable("userId") int userId,

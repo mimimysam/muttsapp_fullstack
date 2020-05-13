@@ -11,21 +11,21 @@ import java.util.ArrayList;
 @Mapper
 public interface UserMapper {
 
-    String SELECT_ALL_USERS = "select * from `MuttsApp`.users";
+    String SELECT_ALL_USERS = "select * from `MuttsApp`.user";
 
-    String SELECT_BY_FIRST_LAST_NAME = "select * from `MuttsApp`.users " +
+    String SELECT_BY_FIRST_LAST_NAME = "select * from `MuttsApp`.user " +
             "where firstName = #{param1} and lastName = #{param2}";
 
-    String GET_USER_FIRST_NAMES = "SELECT firstName FROM whatsapp.user " +
+    String GET_USER_FIRST_NAMES = "SELECT firstName FROM MuttsApp.user " +
             "where userId = #{param1} or userId = #{param2}";
 
-    String INSERT_USER = "INSERT INTO `MuttsApp`.users (firstName, lastName) " +
+    String INSERT_USER = "INSERT INTO `MuttsApp`.user (firstName, lastName) " +
             "VALUES (#{firstName}, #{lastName})";
 
-    String UPDATE_USER = "UPDATE `MuttsApp`.`users` SET `firstName` = #{firstName}, " +
+    String UPDATE_USER = "UPDATE `MuttsApp`.`user` SET `firstName` = #{firstName}, " +
             "`lastName` = #{lastName}, `isActive` = #{isActive} WHERE (`userId` = #{userId})";
 
-    String DELETE_USER = "UPDATE `MuttsApp`.users set isActive = false where userId = #{userId} ";
+    String DELETE_USER = "UPDATE `MuttsApp`.user set isActive = false where userId = #{userId} ";
 
     @Select(SELECT_ALL_USERS)
     public ArrayList<User> getAllUsers();
