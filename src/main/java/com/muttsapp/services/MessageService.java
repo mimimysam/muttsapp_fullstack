@@ -1,5 +1,6 @@
 package com.muttsapp.services;
 
+import com.muttsapp.mappers.UserChatMapper;
 import com.muttsapp.repositories.MessageRepository;
 import com.muttsapp.tables.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,14 @@ import org.springframework.stereotype.Service;
 public class MessageService {
 
     @Autowired
-    MessageRepository repo;
+    UserChatMapper userChatMapper;
 
     public Message getMessageById(int id) {
-        return repo.findById(id);
+        return userChatMapper.findMessage(id);
     }
 
     public void deleteMessage(int id) {
-        repo.deleteById(id);
+        userChatMapper.deleteMessage(id);
     }
 
 }

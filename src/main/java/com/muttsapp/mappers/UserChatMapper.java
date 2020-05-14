@@ -61,7 +61,9 @@ public interface UserChatMapper {
 
     String UPDATE_USER_CHATS = "insert into `MuttsApp`.userChat (userId, chatId) VALUES (#{param1}, #{param2})";
 
-    String DELETE_MESSAGE = "DELETE FROM `MuttsApp`.`message` WHERE (`id` = '#{id}')";
+    String FIND_MESSAGE =  "SELECT m.id, m.message, m.dateSent, m.chatId, m.userId FROM message m WHERE (id = #{id})";
+
+    String DELETE_MESSAGE = "DELETE FROM `MuttsApp`.`message` WHERE (id = #{id})";
 
     @Select(GET_CHATS_BY_USER_ID)
     public List<UserChat> getChatsByUserId(int userId);
@@ -95,6 +97,9 @@ public interface UserChatMapper {
 
     @Insert(UPDATE_USER_CHATS)
     void updateUserChats(int userId, int chatId);
+
+    @Select(FIND_MESSAGE)
+    public Message findMessage(int id);
 
     @Delete(DELETE_MESSAGE)
     void deleteMessage(int id);

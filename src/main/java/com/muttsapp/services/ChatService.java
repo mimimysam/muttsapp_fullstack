@@ -28,6 +28,7 @@ public class ChatService {
 
     public List<UserChat> getChatsByUserId(int userId) {
         List<UserChat> chats = userChatMapper.getChatsByUserId(userId);
+//        chats.add(userChatMapper.getChatsWithoutMessages(userId));
         for (UserChat u : chats) {
             Message m = userChatMapper.getLastMessage(u.getChatId());
             u.setLastMessage(m.getMessage());

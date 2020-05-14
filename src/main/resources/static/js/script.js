@@ -40,10 +40,10 @@ getUserChats();
     These next two functions iterate over an array of objects, and pass the objects to the functions that create elements
 
 ================= */
-function createChatBubbles(dataObj) {
+function createChatBubbles(dataObj, senderID) {
     document.getElementById('chat-bubble-wrapper').innerHTML="";
     let messageArr = dataObj.data;
-    messageArr.forEach(chat => createChatBubble(chat))
+    messageArr.forEach(chat => createChatBubble(chat, senderID))
 }
 
 function createPreviewBoxes(dataObj){
@@ -78,10 +78,12 @@ function getChatMessages(senderID){
          //The response object is assigned to the parameter in the following method as "response"
         .then(response => response.json())
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
-
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
         .then(dataObj => {
-            createChatBubbles(dataObj)})
+            console.log(dataObj)
+            console.log(senderID)
+//            dataObj.data.setAttribute('data-other_sender_id', senderID);
+            createChatBubbles(dataObj, senderID)})
     }
 
 /*  ===============
@@ -95,7 +97,7 @@ function getChatMessages(senderID){
 * and adds it to the page
 * this function takes in one parameter, a message object
 */
-const createChatBubble = (msg) => {
+const createChatBubble = (msg, senderID) => {
     //Create chat bubble wrap and the pargraph that holds the chat message
     let chatBubble = document.createElement('div');
     let sentClassName;
@@ -105,24 +107,53 @@ const createChatBubble = (msg) => {
         sentClassName = "in";
     }
     chatBubble.classList.add("chat-bubble", sentClassName);
+    chatBubble.setAttribute('id', msg.id)
     let paragraph = document.createElement('p');
     paragraph.innerText = msg.message;
     chatBubble.appendChild(paragraph);
-    //Append the created elements to the page
     let wrapper = document.getElementById('chat-bubble-wrapper');
     wrapper.prepend(chatBubble);
     if (sentClassName === "out") {
-        chatBubble.setAttribute('data-toggle', 'modal');
-        chatBubble.setAttribute('data-target', '#deleteMessageModal');
-//        chatBubble.addEventListener('click', deleteMessage);
+        chatBubble.addEventListener('click', bubbleClick);
+//        chatBubble.setAttribute('data-toggle', 'modal');
+//        chatBubble.setAttribute('data-target', '#deleteMessageModal');
+        chatBubble.setAttribute('data-otheruserid', senderID)
+
     }
 }
 
-//function deleteMessage(event) {
-//    chatBubble.setAttribute('data-toggle', 'modal');
-//    chatBubble.setAttribute('data-target', '#myModal');
-//    chatBubble.setAttribute('title', 'Delete message');
-//}
+function bubbleClick(event) {
+    let bubble = event.target.closest(".chat-bubble");
+    let bubbleId = bubble.getAttribute('id');
+    let otherSenderId = bubble.getAttribute("data-otheruserid");
+//    let otherSenderId = bubble.dataset.otheruserid (same as ln 127)
+    deleteBtn.setAttribute('data-message_id', bubbleId);
+    deleteBtn.setAttribute('data-other_user_id', otherSenderId)
+    $('#deleteMessageModal').modal('show')
+}
+
+let deleteBtn = document.getElementById('delete-btn');
+deleteBtn.addEventListener('click', deleteMessage);
+
+function deleteMessage(event) {
+    let msgId = event.target.dataset.message_id
+    let updatedSenderId = event.target.dataset.other_user_id;
+    let postParams = {
+       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+       headers: {
+           'Content-Type': 'application/json; charset=UTF-8',
+           'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+           'Access-Control-Allow-Origin':'*'
+       },
+//       body: JSON.stringify()
+    };
+    fetch(`/message/${msgId}`, postParams)
+//        .then(res => res.json())
+        .then(res => {
+            $('#deleteMessageModal').modal('hide')
+            getChatMessages(updatedSenderId);
+    });
+}
 
 /*
 * This function creates a single "Chat Preview Box" (an individual sidebar item and its children)
