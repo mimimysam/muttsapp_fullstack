@@ -30,6 +30,7 @@ function getUserChats() {
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles preview box creation
         .then(dataObj => {
+            console.log(dataObj)
             createPreviewBoxes(dataObj)
         })
 };
@@ -48,7 +49,7 @@ function createChatBubbles(dataObj, senderID) {
 
 function createPreviewBoxes(dataObj){
     let chatsArr = dataObj.data;
-//    let sorted = chatsArr.sort((a, b) => new Date(b.dateSent) - new Date(a.dateSent))
+    let sorted = chatsArr.sort((a, b) => new Date(b.dateSent) - new Date(a.dateSent))
     chatsArr.forEach(chat => {
         savedUserChats.push(chat)
         createPreviewBox(chat)
@@ -307,8 +308,6 @@ function createNewChat(userId, newChatUserId) {
        },
        body: JSON.stringify()
     };
-    console.log(userId);
-    console.log(newChatUserId);
     fetch(`${baseUrl}/${userId}/chats/${newChatUserId}` , postParams)
         .then(res => res.json())
         .then(newChatObj => {

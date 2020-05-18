@@ -16,11 +16,9 @@ import java.util.List;
 @Mapper
 public interface UserChatMapper {
 
-    String GET_CHATS_BY_USER_ID = "select distinct(c.chatTitle) as chatName, c.chatId as chatId, m.maxDateSent, " +
-            "m2.userId as senderId from chat c join ( select chatId, max(dateSent) as maxDateSent from message " +
-            "group by chatId ) m on c.chatId = m.chatId join message m2 on m.maxDateSent = m2.dateSent " +
-            "and m.chatId = m2.chatId join userChat uc on uc.chatId = m.chatId where uc.userId = #{userId} " +
-            "order by m2.dateSent desc";
+    String GET_CHATS_BY_USER_ID = "SELECT distinct(c.chatTitle) as chatName, c.chatId FROM chat c " +
+            "join userChat uc on c.chatId = uc.chatId " +
+            "where uc.userId = #{userId}";
 
     String GET_LAST_MESSAGE = "select * from message where chatid = #{chatId} " +
             "order by id desc limit 1";
