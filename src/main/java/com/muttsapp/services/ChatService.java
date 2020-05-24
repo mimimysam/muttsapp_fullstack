@@ -25,7 +25,7 @@ public class ChatService {
     UserMapper userMapper;
 
     @Autowired
-    UserLoginService userLoginService;
+    MessageService messageService;
 
     public List<UserChat> getChatsByUserId(int userId) {
         List<UserChat> chats = userChatMapper.getChatsByUserId(userId);
@@ -37,6 +37,10 @@ public class ChatService {
                 u.setLastMessage(m.getMessage());
                 u.setSenderId(m.getUserId());
                 u.setDateSent(m.getDateSent());
+            } else {
+                u.setLastMessage("No message available");
+                u.setSenderId(-1);
+                u.setDateSent("-1");
             }
         }
         return chats;
@@ -66,4 +70,12 @@ public class ChatService {
         userChatMapper.saveMessage(msg);
     }
 
+    public void deleteChat(int chatId) {
+        ArrayList<Message> messages = userChatMapper.findMessagesByChatId(chatId);
+        for (Message m : messages) {
+            messageService.deleteMessage(m.getId());
+        }
+        userChatMapper.deleteChat(chatId);
+        userChatMapper.deleteUserChat(chatId);
+    }
 }

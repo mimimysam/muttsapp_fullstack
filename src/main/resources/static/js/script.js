@@ -30,7 +30,6 @@ function getUserChats() {
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles preview box creation
         .then(dataObj => {
-            console.log(dataObj)
             createPreviewBoxes(dataObj)
         })
 };
@@ -48,6 +47,7 @@ function createChatBubbles(dataObj, senderID) {
 }
 
 function createPreviewBoxes(dataObj){
+    document.getElementById('message-wrapper').innerHTML = ""
     let chatsArr = dataObj.data;
     let sorted = chatsArr.sort((a, b) => new Date(b.dateSent) - new Date(a.dateSent))
     chatsArr.forEach(chat => {
@@ -66,8 +66,9 @@ function previewBoxClick(event) {
     headerName.innerHTML = chatName.innerHTML;
 
     let chatID = previewWrap.dataset.chatid;
-    let senderID = previewWrap.dataset.senderid;
+//    let senderID = previewWrap.dataset.senderid;
     let otherUserId = previewWrap.dataset.otheruserid;
+    document.getElementById('delete-chat-btn').dataset.chatid = chatID
     document.getElementById('send-message').dataset.chatid = chatID;
     document.getElementById('new-message').removeAttribute('disabled');
     getChatMessages(otherUserId)
@@ -81,8 +82,8 @@ function getChatMessages(senderID){
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
         .then(dataObj => {
-            console.log(dataObj)
-            console.log(senderID)
+//            console.log(dataObj)
+//            console.log(senderID)
 //            dataObj.data.setAttribute('data-other_sender_id', senderID);
             createChatBubbles(dataObj, senderID)})
     }
@@ -127,7 +128,7 @@ function bubbleClick(event) {
     let bubble = event.target.closest(".chat-bubble");
     let bubbleId = bubble.getAttribute('id');
     let otherSenderId = bubble.getAttribute("data-otheruserid");
-//    let otherSenderId = bubble.dataset.otheruserid (same as ln 127)
+//    let otherSenderId = bubble.dataset.otheruserid (same as line above, different syntax)
     deleteBtn.setAttribute('data-message_id', bubbleId);
     deleteBtn.setAttribute('data-other_user_id', otherSenderId)
     $('#deleteMessageModal').modal('show')
@@ -198,7 +199,12 @@ function deleteMessage(event) {
     dateWrap.classList.add("date-wrap");
 
     let dateP = document.createElement('p')
-    dateP.innerHTML = new Date(chat.dateSent).toLocaleDateString();
+    let dateVar = chat.dateSent
+    if (dateVar != "-1") {
+        dateP.innerHTML = new Date(dateVar).toLocaleDateString();
+    } else {
+        dateP.innerHTML = ""
+    }
     dateWrap.appendChild(dateP)
     previewBox.appendChild(dateWrap)
 
@@ -311,14 +317,38 @@ function createNewChat(userId, newChatUserId) {
         .then(res => res.json())
         .then(newChatObj => {
             console.log(newChatObj)
-            createPreviewBox(newChatObj);
+            createPreviewBoxes(newChatObj);
             let headerImg = document.querySelector('#recipient-image img');
             let headerName = document.getElementById('chat-name');
-            headerImg.src = newChatObj.photoUrl;
-            headerName.innerHTML = newChatObj.chatName;
+//            let latestChat = newChatObj.data[]
+            let chat = newChatObj.data[newChatObj.data.length-1]
+            headerImg.src = chat.photoUrl ? chat.photoUrl : "./images/defaultIcon.svg"
+            headerName.innerHTML = chat.chatName;
             document.getElementById('send-message').dataset.chatid = newChatObj.chatId;
     });
 }
+
+let deleteChatBtn = document.getElementById('delete-chat-btn');
+deleteChatBtn.addEventListener('click', deleteChat);
+
+function deleteChat(event) {
+    let chatId = event.target.dataset.chatid
+    let postParams = {
+       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+       headers: {
+           'Content-Type': 'application/json; charset=UTF-8',
+           'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+           'Access-Control-Allow-Origin':'*'
+       },
+//       body: JSON.stringify()
+    };
+    fetch(`/message/chat/${chatId}`, postParams)
+//        .then(res => res.json())
+        .then(res => {
+            $('#deleteChatModal').modal('hide');
+            location.replace("http://localhost:8080/index")
+    });
+    }
 
 function closeOneModal(exampleModal) {
     // get modal
@@ -333,3 +363,13 @@ function closeOneModal(exampleModal) {
       document.body.removeChild(modalBackdrops[0]);
   }
 
+window.addEventListener('DOMContentLoaded', () => {
+    const button = document.querySelector('#emoji-btn');
+    const picker = new EmojiButton();
+picker.on('emoji', emoji => {
+    document.querySelector('#new-message').value += emoji;
+});
+button.addEventListener('click', () => {
+    picker.pickerVisible ? picker.hidePicker() : picker.showPicker(button);
+    });
+});

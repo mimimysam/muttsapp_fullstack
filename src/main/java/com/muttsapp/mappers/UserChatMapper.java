@@ -63,6 +63,10 @@ public interface UserChatMapper {
 
     String DELETE_MESSAGE = "DELETE FROM `MuttsApp`.`message` WHERE (id = #{id})";
 
+    String DELETE_CHAT = "DELETE FROM `MuttsApp`.`chat` WHERE (`chatId` = #{chatId})";
+
+    String DELETE_USER_CHAT = "DELETE FROM MuttsApp.userChat where chatId = #{chatId}";
+
     @Select(GET_CHATS_BY_USER_ID)
     public List<UserChat> getChatsByUserId(int userId);
 
@@ -101,5 +105,11 @@ public interface UserChatMapper {
 
     @Delete(DELETE_MESSAGE)
     void deleteMessage(int id);
+
+    @Delete(DELETE_CHAT)
+    void deleteChat(int chatId);
+
+    @Delete(DELETE_USER_CHAT)
+    void deleteUserChat(int chatId);
 
 }

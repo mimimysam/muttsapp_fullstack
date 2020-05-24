@@ -70,5 +70,4 @@ public class UserController {
         obj.setData(chatService.getChatsByUserId(userId));
         return obj;
     }
-
 }
