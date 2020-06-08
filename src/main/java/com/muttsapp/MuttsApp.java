@@ -17,9 +17,4 @@ public class MuttsApp {
 		SpringApplication.run(MuttsApp.class, args);
 	}
 
-//	@Bean(name="entityManagerFactory")
-//	public LocalSessionFactoryBean sessionFactory() {
-//		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-//		return sessionFactory;
-//	}
 }

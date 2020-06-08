@@ -13,6 +13,7 @@ public class Message {
     String dateSent;
     int chatId;
     int userId;
+    boolean isImage;
 
     public Message() {
     }
@@ -55,5 +56,13 @@ public class Message {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public boolean isImage() {
+        return isImage;
+    }
+
+    public void setImage(boolean image) {
+        isImage = image;
     }
 }

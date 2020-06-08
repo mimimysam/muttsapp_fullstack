@@ -32,7 +32,7 @@ public interface UserChatMapper {
             "where m.userId = #{userId} and c.chatId = #{chatId} " +
             "order by id desc";
 
-    String FIND_MESSAGES_BY_CHAT_ID = "select c.chatId, m.id, m.message, m.dateSent, m.chatId, m.userId, c.chatTitle " +
+    String FIND_MESSAGES_BY_CHAT_ID = "select c.chatId, m.id, m.message, m.isImage, m.dateSent, m.chatId, m.userId, c.chatTitle " +
             "from message m " +
             "join chat c " +
             "on c.chatId = m.chatId " +
@@ -47,8 +47,8 @@ public interface UserChatMapper {
             "order by count(uc.chatId) " +
             "desc limit 1";
 
-    String SAVE_MESSAGE = "INSERT INTO `MuttsApp`.`message` (`message`, `chatId`, `userId`) VALUES (#{message}, " +
-            "#{chatId}, #{userId})";
+    String SAVE_MESSAGE = "INSERT INTO `MuttsApp`.`message` (`message`, `chatId`, `userId`, `isImage`) VALUES (#{message}, " +
+            "#{chatId}, #{userId}, #{isImage})";
 
     String GET_OTHER_USER_ID = "SELECT uc2.userId " +
             "FROM userChat uc1 " +

@@ -66,10 +66,13 @@ function previewBoxClick(event) {
     headerName.innerHTML = chatName.innerHTML;
 
     let chatID = previewWrap.dataset.chatid;
-//    let senderID = previewWrap.dataset.senderid;
+    let senderID = previewWrap.dataset.senderid;
     let otherUserId = previewWrap.dataset.otheruserid;
-    document.getElementById('delete-chat-btn').dataset.chatid = chatID
+    document.getElementById('delete-chat-btn').dataset.chatid = chatID;
     document.getElementById('send-message').dataset.chatid = chatID;
+    document.getElementById('image-form').dataset.senderid = senderID;
+    document.getElementById('image-form').dataset.chatid = chatID;
+    document.getElementById('image-form').dataset.otheruserid = otherUserId;
     document.getElementById('new-message').removeAttribute('disabled');
     getChatMessages(otherUserId)
     }
@@ -82,7 +85,7 @@ function getChatMessages(senderID){
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
         .then(dataObj => {
-//            console.log(dataObj)
+            console.log(dataObj)
 //            console.log(senderID)
 //            dataObj.data.setAttribute('data-other_sender_id', senderID);
             createChatBubbles(dataObj, senderID)})
@@ -100,7 +103,7 @@ function getChatMessages(senderID){
 * this function takes in one parameter, a message object
 */
 const createChatBubble = (msg, senderID) => {
-    //Create chat bubble wrap and the pargraph that holds the chat message
+    //Create chat bubble wrap and the paragraph that holds the chat message
     let chatBubble = document.createElement('div');
     let sentClassName;
     if( msg.userId === +userId ){
@@ -110,9 +113,17 @@ const createChatBubble = (msg, senderID) => {
     }
     chatBubble.classList.add("chat-bubble", sentClassName);
     chatBubble.setAttribute('id', msg.id)
-    let paragraph = document.createElement('p');
-    paragraph.innerText = msg.message;
-    chatBubble.appendChild(paragraph);
+    chatBubble.setAttribute('image', msg.image)
+    if (msg.image === true) {
+        let image = document.createElement('img')
+        image.setAttribute('src', msg.message)
+        image.setAttribute('alt', 'uploaded image')
+        chatBubble.appendChild(image)
+    } else {
+        let paragraph = document.createElement('p');
+        paragraph.innerText = msg.message;
+        chatBubble.appendChild(paragraph);
+    }
     let wrapper = document.getElementById('chat-bubble-wrapper');
     wrapper.prepend(chatBubble);
     if (sentClassName === "out") {
@@ -120,7 +131,6 @@ const createChatBubble = (msg, senderID) => {
 //        chatBubble.setAttribute('data-toggle', 'modal');
 //        chatBubble.setAttribute('data-target', '#deleteMessageModal');
         chatBubble.setAttribute('data-otheruserid', senderID)
-
     }
 }
 
@@ -221,6 +231,7 @@ function deleteMessage(event) {
          userId:+userId,
          chatId:+(event.target.dataset.chatid),
          message:msg,
+//         isImage:false
      }
      createChatBubble(msgObj);
      sendNewMessage(msgObj);
@@ -316,11 +327,10 @@ function createNewChat(userId, newChatUserId) {
     fetch(`${baseUrl}/${userId}/chats/${newChatUserId}` , postParams)
         .then(res => res.json())
         .then(newChatObj => {
-            console.log(newChatObj)
+            console.log(newChatObj);
             createPreviewBoxes(newChatObj);
             let headerImg = document.querySelector('#recipient-image img');
             let headerName = document.getElementById('chat-name');
-//            let latestChat = newChatObj.data[]
             let chat = newChatObj.data[newChatObj.data.length-1]
             headerImg.src = chat.photoUrl ? chat.photoUrl : "./images/defaultIcon.svg"
             headerName.innerHTML = chat.chatName;
@@ -373,3 +383,34 @@ button.addEventListener('click', () => {
     picker.pickerVisible ? picker.hidePicker() : picker.showPicker(button);
     });
 });
+
+let imageForm = document.querySelector('#image-form')
+imageForm.addEventListener('submit', sendImage)
+
+function sendImage(event) {
+    event.preventDefault();
+    console.log(event);
+    let file = new FormData(event.target);
+    let postParams = {
+       method: 'POST', // *GET, POST, PUT, DELETE, etc.
+       headers: {
+//           'Content-Type': 'application/json; charset=UTF-8',
+           'Access-Control-Allow-Headers': "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
+           'Access-Control-Allow-Origin':'*'
+       },
+       body: file
+    };
+    for (var value of file.values()) {
+       console.log(value);
+    }
+    chatId = document.getElementById('image-form').dataset.chatid
+    fetch(`/message/image/${chatId}/${userId}`, postParams)
+//        .then(res => res.json())
+        .then(imageObj => {
+            console.log(imageObj);
+            getUserChats();
+            otherUserId = document.getElementById('image-form').dataset.otheruserid;
+            getChatMessages(otherUserId);
+    });
+    $('#uploadModal').modal('hide');
+}
