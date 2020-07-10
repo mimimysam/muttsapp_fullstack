@@ -6,6 +6,7 @@ import com.muttsapp.services.ChatService;
 import com.muttsapp.services.UserLoginService;
 import com.muttsapp.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,14 @@ public class UserController {
     UserLoginService userLoginService;
     @Autowired
     ChatService chatService;
+
+//    private static final String WS_MESSAGE_TRANSFER_DESTINATION = "/message/alert/{userid}";
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    public UserController(SimpMessagingTemplate simpMessagingTemplate) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
 
     @GetMapping()
     public CustomResponseObject<List<User>> getAllUsers() {
@@ -66,6 +75,13 @@ public class UserController {
         CustomResponseObject<List<UserChat>> obj = new CustomResponseObject<>();
         chatService.saveMessage(msg);
         obj.setData(chatService.getChatsByUserId(userId));
+
+
+        simpMessagingTemplate.convertAndSend("/topic/messages/" + obj.getData().get(0).getOtherUserId(),
+                obj.getData().get(0).getLastMessage());
         return obj;
     }
+
 }
+
+

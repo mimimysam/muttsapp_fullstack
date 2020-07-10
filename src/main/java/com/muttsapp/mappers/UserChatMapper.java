@@ -7,18 +7,18 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-
-import javax.swing.plaf.PanelUI;
-import javax.websocket.server.ServerEndpoint;
 import java.util.ArrayList;
 import java.util.List;
 
 @Mapper
 public interface UserChatMapper {
 
-    String GET_CHATS_BY_USER_ID = "SELECT distinct(c.chatTitle) as chatName, c.chatId FROM chat c " +
+    String GET_CHATS_BY_USER_ID = "SELECT distinct(c.chatTitle) as chatName, c.chatId, max(m.dateSent) as dateSent FROM chat c " +
             "join userChat uc on c.chatId = uc.chatId " +
-            "where uc.userId = #{userId}";
+            "left join message m on m.chatId = uc.chatId " +
+            "where uc.userId = #{userId} " +
+            "group by chatId " +
+            "order by dateSent desc";
 
     String GET_LAST_MESSAGE = "select * from message where chatid = #{chatId} " +
             "order by id desc limit 1";
@@ -55,7 +55,7 @@ public interface UserChatMapper {
             "JOIN userChat uc2 ON uc1.chatId = uc2.chatId AND uc1.userId != uc2.userId " +
             "WHERE uc1.userId = #{param1} AND uc1.chatId = #{param2}";
 
-    String CREATE_NEW_CHAT = "insert into chat (chatTitle) VALUES (#{chatTitle})";
+    String CREATE_NEW_CHAT = "INSERT INTO MuttsApp.chat (chatTitle) VALUES (#{chatTitle})";
 
     String UPDATE_USER_CHATS = "insert into `MuttsApp`.userChat (userId, chatId) VALUES (#{param1}, #{param2})";
 

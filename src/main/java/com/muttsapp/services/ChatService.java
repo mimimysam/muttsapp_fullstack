@@ -29,6 +29,8 @@ public class ChatService {
 
     public List<UserChat> getChatsByUserId(int userId) {
         List<UserChat> chats = userChatMapper.getChatsByUserId(userId);
+//        List<UserChat> newChat = userChatMapper.getNewChat(userId);
+//        chats.addAll(newChat);
         for (UserChat u : chats) {
             u.setOtherUserId(userChatMapper.getOtherUserId(userId, u.getChatId()));
             u.setPhotoUrl(userChatMapper.getPhotoUrl(u.getOtherUserId()));

@@ -2,6 +2,42 @@ let userId=document.getElementById("userId").value;
 let baseUrl = '/users';
 let savedUserChats = [];
 
+var stompClient = null;
+
+function connect() {
+        var socket = new SockJS('/chat');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+//            setConnected(true);
+            stompClient.subscribe('/topic/messages/' + userId, function(messageOutput) {
+                console.log("Notification Alert");
+                getUserChats();
+                otherUserId = document.getElementById('header-main').dataset.otheruserid;
+                getChatMessages(otherUserId);
+                changeTitle();
+            });
+        });
+    }
+connect();
+
+function disconnect() {
+        if(stompClient != null) {
+            stompClient.disconnect();
+        }
+//        setConnected(false);
+        console.log("Disconnected");
+    }
+
+
+var count = 0;
+var title = document.title;
+
+function changeTitle() {
+    count++;
+    var newTitle = '(' + count + ') ' + title;
+    document.title = newTitle;
+}
+
 function getUserImg() {
     fetch(`${baseUrl}/${userId}/`)
     .then(response => response.json())
@@ -17,7 +53,8 @@ let logoutBtn = document.getElementById('logout-btn');
 logoutBtn.addEventListener('click', logout);
 
 function logout(e) {
-    location.replace("http://localhost:8080/logout")
+    disconnect();
+    location.replace("http://localhost:8080/logout");
 }
 
 //As soon as JS file loads, we run this function to get all the items for the sidebar
@@ -49,7 +86,7 @@ function createChatBubbles(dataObj, senderID) {
 function createPreviewBoxes(dataObj){
     document.getElementById('message-wrapper').innerHTML = ""
     let chatsArr = dataObj.data;
-    let sorted = chatsArr.sort((a, b) => new Date(b.dateSent) - new Date(a.dateSent))
+    let sorted = chatsArr.sort((a, b) => new Date(b.dateSent.replace(/ /g,"T")) - new Date(a.dateSent.replace(/ /g,"T")))
     chatsArr.forEach(chat => {
         savedUserChats.push(chat)
         createPreviewBox(chat)
@@ -70,10 +107,14 @@ function previewBoxClick(event) {
     let otherUserId = previewWrap.dataset.otheruserid;
     document.getElementById('delete-chat-btn').dataset.chatid = chatID;
     document.getElementById('send-message').dataset.chatid = chatID;
+    document.getElementById('send-message').dataset.otheruserid = otherUserId;
     document.getElementById('image-form').dataset.senderid = senderID;
     document.getElementById('image-form').dataset.chatid = chatID;
     document.getElementById('image-form').dataset.otheruserid = otherUserId;
+    document.getElementById('header-main').dataset.otheruserid = otherUserId;
     document.getElementById('new-message').removeAttribute('disabled');
+    document.title = "Mutts App";
+    count = 0;
     getChatMessages(otherUserId)
     }
 
@@ -85,9 +126,6 @@ function getChatMessages(senderID){
         //The response object needs to be turned into a JS object for parsing. That process is above, then the result is passed to the next '.then' method
         // The object created in the last step is assigned to "dataObj", then the data object is passed to a function that handles the creation of a chat message bubble
         .then(dataObj => {
-            console.log(dataObj)
-//            console.log(senderID)
-//            dataObj.data.setAttribute('data-other_sender_id', senderID);
             createChatBubbles(dataObj, senderID)})
     }
 
@@ -140,8 +178,8 @@ function bubbleClick(event) {
     let otherSenderId = bubble.getAttribute("data-otheruserid");
 //    let otherSenderId = bubble.dataset.otheruserid (same as line above, different syntax)
     deleteBtn.setAttribute('data-message_id', bubbleId);
-    deleteBtn.setAttribute('data-other_user_id', otherSenderId)
-    $('#deleteMessageModal').modal('show')
+    deleteBtn.setAttribute('data-other_user_id', otherSenderId);
+    $('#deleteMessageModal').modal('show');
 }
 
 let deleteBtn = document.getElementById('delete-btn');
@@ -164,6 +202,7 @@ function deleteMessage(event) {
         .then(res => {
             $('#deleteMessageModal').modal('hide')
             getChatMessages(updatedSenderId);
+            getUserChats();
     });
 }
 
@@ -209,7 +248,7 @@ function deleteMessage(event) {
     dateWrap.classList.add("date-wrap");
 
     let dateP = document.createElement('p')
-    let dateVar = chat.dateSent
+    let dateVar = chat.dateSent.replace(/ /g,"T")
     if (dateVar != "-1") {
         dateP.innerHTML = new Date(dateVar).toLocaleDateString();
     } else {
@@ -231,11 +270,11 @@ function deleteMessage(event) {
          userId:+userId,
          chatId:+(event.target.dataset.chatid),
          message:msg,
-//         isImage:false
      }
      createChatBubble(msgObj);
      sendNewMessage(msgObj);
      document.getElementById("new-message").value = " ";
+
  });
 
  /*
@@ -251,10 +290,10 @@ function sendNewMessage(msgObj) {
        },
        body: JSON.stringify(msgObj)
     };
-    fetch(`${baseUrl}/${userId}/message`, postParams)
+    fetch(`${baseUrl}/${userId}/message/`, postParams)
         .then(res => res.json())
         .then(res => {
-            return getUserChats();
+            getUserChats();
     });
 }
 
@@ -389,7 +428,6 @@ imageForm.addEventListener('submit', sendImage)
 
 function sendImage(event) {
     event.preventDefault();
-    console.log(event);
     let file = new FormData(event.target);
     let postParams = {
        method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -401,13 +439,11 @@ function sendImage(event) {
        body: file
     };
     for (var value of file.values()) {
-       console.log(value);
     }
     chatId = document.getElementById('image-form').dataset.chatid
     fetch(`/message/image/${chatId}/${userId}`, postParams)
 //        .then(res => res.json())
         .then(imageObj => {
-            console.log(imageObj);
             getUserChats();
             otherUserId = document.getElementById('image-form').dataset.otheruserid;
             getChatMessages(otherUserId);
