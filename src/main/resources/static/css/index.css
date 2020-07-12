@@ -176,6 +176,7 @@ header {
     display: inline-block;
     overflow-y: auto;
     position: relative;
+    min-height: 0;
 }
 
 .main-chat:after {
@@ -191,14 +192,20 @@ header {
 }
 
 /* Wrapper Around the main chat */
-.chat-container {
+
+#chat-scroll-wrapper {
     height: calc(100% - 80px);
-    width: calc(100% - 20px);
+    overflow-y: auto
+}
+
+.chat-container {
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-start;
     align-items: flex-start;
     padding: 0 20px;
+    overflow-y: scroll;
+    min-height: 0;
 }
 
 .chat-bubble {
@@ -270,3 +277,8 @@ input::placeholder {
     font-size: 15px;
     font-style: italic;
   }
+
+.chat-bubble > img {
+    max-width: 100%;
+    height: auto
+}

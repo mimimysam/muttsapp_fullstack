@@ -20,13 +20,13 @@ public class UserController {
     @Autowired
     ChatService chatService;
 
-//    private static final String WS_MESSAGE_TRANSFER_DESTINATION = "/message/alert/{userid}";
-    private final SimpMessagingTemplate simpMessagingTemplate;
-
     @Autowired
     public UserController(SimpMessagingTemplate simpMessagingTemplate) {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
+
+    //    private static final String WS_MESSAGE_TRANSFER_DESTINATION = "/message/alert/{userid}";
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping()
     public CustomResponseObject<List<User>> getAllUsers() {
@@ -75,7 +75,6 @@ public class UserController {
         CustomResponseObject<List<UserChat>> obj = new CustomResponseObject<>();
         chatService.saveMessage(msg);
         obj.setData(chatService.getChatsByUserId(userId));
-
 
         simpMessagingTemplate.convertAndSend("/topic/messages/" + obj.getData().get(0).getOtherUserId(),
                 obj.getData().get(0).getLastMessage());

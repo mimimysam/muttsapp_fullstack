@@ -113,7 +113,7 @@ function previewBoxClick(event) {
     document.getElementById('image-form').dataset.otheruserid = otherUserId;
     document.getElementById('header-main').dataset.otheruserid = otherUserId;
     document.getElementById('new-message').removeAttribute('disabled');
-    document.title = "Mutts App";
+    title = "Mutts App";
     count = 0;
     getChatMessages(otherUserId)
     }
@@ -164,6 +164,8 @@ const createChatBubble = (msg, senderID) => {
     }
     let wrapper = document.getElementById('chat-bubble-wrapper');
     wrapper.prepend(chatBubble);
+    let el = document.querySelector('#chat-scroll-wrapper');
+    el.scrollTop = el.scrollHeight;
     if (sentClassName === "out") {
         chatBubble.addEventListener('click', bubbleClick);
 //        chatBubble.setAttribute('data-toggle', 'modal');
@@ -274,7 +276,6 @@ function deleteMessage(event) {
      createChatBubble(msgObj);
      sendNewMessage(msgObj);
      document.getElementById("new-message").value = " ";
-
  });
 
  /*
