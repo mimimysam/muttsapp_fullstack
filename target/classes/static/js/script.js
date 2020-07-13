@@ -113,7 +113,7 @@ function previewBoxClick(event) {
     document.getElementById('image-form').dataset.otheruserid = otherUserId;
     document.getElementById('header-main').dataset.otheruserid = otherUserId;
     document.getElementById('new-message').removeAttribute('disabled');
-    title = "Mutts App";
+    document.title = "Mutts App";
     count = 0;
     getChatMessages(otherUserId)
     }

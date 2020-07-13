@@ -25,7 +25,11 @@ public interface UserMapper {
     String UPDATE_USER = "UPDATE `MuttsApp`.`user` SET `firstName` = #{firstName}, " +
             "`lastName` = #{lastName}, `isActive` = #{isActive} WHERE (`userId` = #{userId})";
 
-    String DELETE_USER = "UPDATE `MuttsApp`.user set isActive = false where userId = #{userId} ";
+    String DELETE_USER = "UPDATE `MuttsApp`.user set isActive = false where userId = #{userId}";
+
+    String GET_FIRST_NAME = "SELECT firstName FROM MuttsApp.user where userId = #{userId}";
+
+    String GET_LAST_NAME = "SELECT lastName FROM MuttsApp.user where userId = #{userId}";
 
     @Select(SELECT_ALL_USERS)
     public ArrayList<User> getAllUsers();
@@ -43,6 +47,12 @@ public interface UserMapper {
     int patchUser(User user);
 
     @Update(DELETE_USER)
-    int makeUserInactive(int id);
+    int makeUserInactive(int userId);
+
+    @Select(GET_FIRST_NAME)
+    public String getFirstName(int userId);
+
+    @Select(GET_LAST_NAME)
+    public String getLastName(int userId);
 
 }

@@ -1,5 +1,6 @@
 package com.muttsapp.services;
 
+import com.muttsapp.mappers.UserMapper;
 import com.muttsapp.repositories.RoleRepository;
 import com.muttsapp.tables.Role;
 import com.muttsapp.tables.User;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -22,18 +24,26 @@ public class UserLoginService {
     RoleRepository roleRepository;
 
     @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    AmazonSESService amazonSESService;
+
+    @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> getAllUsers() {
         return repo.findAll();
     }
 
-    public void saveUser(User user) {
+    public void saveUser(User user) throws IOException {
         user.setEnabled(true);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         Role userRole = roleRepository.findByRole("USER");
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         repo.save(user);
+        String userName = userMapper.getFirstName(user.getUserId()) + " " + userMapper.getLastName(user.getUserId());
+        amazonSESService.sendNewUserNotification(userName);
     }
 
     public User findUserByID (int userId) {

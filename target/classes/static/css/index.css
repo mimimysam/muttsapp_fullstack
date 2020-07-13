@@ -199,8 +199,6 @@ header {
 }
 
 .chat-container {
-/*    height: calc(100% - 80px);
-    width: calc(100% - 20px);   */
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-start;
