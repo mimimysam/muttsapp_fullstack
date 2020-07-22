@@ -14,11 +14,13 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         return bCryptPasswordEncoder;
     }
 
-    @Override
+
+//    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("/webjars/")
                 .resourceChain(false);
         registry.setOrder(1);
     }
+
 }

@@ -105,10 +105,13 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.29" level="project" />
     <orderEntry type="library" name="Maven: io.github.classgraph:classgraph:4.8.44" level="project" />
     <orderEntry type="library" name="Maven: org.webjars.npm:angular__http:2.4.10" level="project" />
+    <orderEntry type="library" name="Maven: org.webjars:webjars-locator:0.30" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.9" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:sockjs-client:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:stomp-websocket:2.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:bootstrap:3.3.7" level="project" />
-    <orderEntry type="library" name="Maven: org.webjars:jquery:3.1.1-1" level="project" />
+    <orderEntry type="library" name="Maven: org.webjars:jquery:3.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.webjars:jquery-ui:1.12.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework.boot:spring-boot-starter-tomcat:2.2.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:1.3.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:9.0.29" level="project" />

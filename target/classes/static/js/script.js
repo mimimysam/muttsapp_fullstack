@@ -1,11 +1,11 @@
 let userId=document.getElementById("userId").value;
-let baseUrl = '/users';
+let baseUrl = '/muttsapp/users';
 let savedUserChats = [];
 
 var stompClient = null;
 
 function connect() {
-        var socket = new SockJS('/chat');
+        var socket = new SockJS('/muttsapp/chat');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function(frame) {
 //            setConnected(true);
@@ -54,7 +54,7 @@ logoutBtn.addEventListener('click', logout);
 
 function logout(e) {
     disconnect();
-    location.replace("http://localhost:8080/logout");
+    location.replace("/muttsapp/logout");
 }
 
 //As soon as JS file loads, we run this function to get all the items for the sidebar
@@ -199,7 +199,7 @@ function deleteMessage(event) {
        },
 //       body: JSON.stringify()
     };
-    fetch(`/message/${msgId}`, postParams)
+    fetch(`/muttsapp/message/${msgId}`, postParams)
 //        .then(res => res.json())
         .then(res => {
             $('#deleteMessageModal').modal('hide')
@@ -392,11 +392,11 @@ function deleteChat(event) {
        },
 //       body: JSON.stringify()
     };
-    fetch(`/message/chat/${chatId}`, postParams)
+    fetch(`/muttsapp/message/chat/${chatId}`, postParams)
 //        .then(res => res.json())
         .then(res => {
             $('#deleteChatModal').modal('hide');
-            location.replace("http://localhost:8080/index")
+            location.replace("/muttsapp")
     });
     }
 
@@ -442,7 +442,7 @@ function sendImage(event) {
     for (var value of file.values()) {
     }
     chatId = document.getElementById('image-form').dataset.chatid
-    fetch(`/message/image/${chatId}/${userId}`, postParams)
+    fetch(`/muttsapp/message/image/${chatId}/${userId}`, postParams)
 //        .then(res => res.json())
         .then(imageObj => {
             getUserChats();
