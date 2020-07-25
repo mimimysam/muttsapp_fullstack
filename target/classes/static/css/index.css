@@ -11,6 +11,11 @@ body {
     padding: 0;
 }
 
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 
 /* ===============================================
         Header Styles
@@ -148,12 +153,16 @@ header {
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     justify-content: space-around;
 }
 
 .message-text-wrap > p {
-    margin: 0
+    margin: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 /* This div will hold the date */
@@ -202,8 +211,7 @@ header {
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-start;
-    align-items: flex-start;
-    padding: 0 20px;
+    padding: 10px 20px;
     overflow-y: scroll;
     min-height: 0;
 }
@@ -215,6 +223,18 @@ header {
      position: relative;
      font-size: .95em;
      background-color: #ffffff;
+     margin-bottom: 4px;
+}
+
+.chat-bubble > p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.chat-bubble > img {
+    max-width: 100%;
+    height: auto
 }
 
 .chat-bubble:before{
@@ -233,6 +253,10 @@ header {
 .chat-bubble.in:before {
     border-top-color: #ffffff;
     left: 0;
+}
+
+.chat-bubble.in {
+    align-self: flex-start;
 }
 
 .chat-bubble.out {
@@ -269,16 +293,13 @@ input[name="message"]{
     border: none;
     border-radius: 10%;
 }
+
 .message-box button {
     border: none;
     background-color: inherit;
 }
+
 input::placeholder {
     font-size: 15px;
     font-style: italic;
   }
-
-.chat-bubble > img {
-    max-width: 100%;
-    height: auto
-}

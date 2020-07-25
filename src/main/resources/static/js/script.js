@@ -367,7 +367,7 @@ function createNewChat(userId, newChatUserId) {
     fetch(`${baseUrl}/${userId}/chats/${newChatUserId}` , postParams)
         .then(res => res.json())
         .then(newChatObj => {
-            console.log(newChatObj);
+//            console.log(newChatObj);
             createPreviewBoxes(newChatObj);
             let headerImg = document.querySelector('#recipient-image img');
             let headerName = document.getElementById('chat-name');
@@ -396,7 +396,7 @@ function deleteChat(event) {
 //        .then(res => res.json())
         .then(res => {
             $('#deleteChatModal').modal('hide');
-            location.replace("/muttsapp")
+            location.replace("/muttsapp/index")
     });
     }
 
@@ -441,7 +441,7 @@ function sendImage(event) {
     };
     for (var value of file.values()) {
     }
-    chatId = document.getElementById('image-form').dataset.chatid
+    chatId = document.getElementById('image-form').dataset.chatid;
     fetch(`/muttsapp/message/image/${chatId}/${userId}`, postParams)
 //        .then(res => res.json())
         .then(imageObj => {

@@ -186,13 +186,6 @@
 
 	</dependencies>
 
-<!--	<repositories>-->
-<!--		<repository>-->
-<!--			<id>webjars</id>-->
-<!--			<url>http://webjars.github.com/m2</url>-->
-<!--		</repository>-->
-<!--	</repositories>-->
-
 	<build>
 		<finalName>muttsapp</finalName>
 		<plugins>

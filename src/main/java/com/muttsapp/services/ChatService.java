@@ -3,20 +3,14 @@ package com.muttsapp.services;
 import com.muttsapp.NewMessageException;
 import com.muttsapp.mappers.UserChatMapper;
 import com.muttsapp.mappers.UserMapper;
-import com.muttsapp.repositories.ChatRepository;
 import com.muttsapp.tables.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ChatService {
-
-    @Autowired
-    ChatRepository repo;
 
     @Autowired
     UserChatMapper userChatMapper;
@@ -29,8 +23,6 @@ public class ChatService {
 
     public List<UserChat> getChatsByUserId(int userId) {
         List<UserChat> chats = userChatMapper.getChatsByUserId(userId);
-//        List<UserChat> newChat = userChatMapper.getNewChat(userId);
-//        chats.addAll(newChat);
         for (UserChat u : chats) {
             u.setOtherUserId(userChatMapper.getOtherUserId(userId, u.getChatId()));
             u.setPhotoUrl(userChatMapper.getPhotoUrl(u.getOtherUserId()));

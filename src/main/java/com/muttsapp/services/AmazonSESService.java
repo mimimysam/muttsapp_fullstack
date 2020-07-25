@@ -4,20 +4,11 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
-import com.muttsapp.mappers.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 
 @Service
 public class AmazonSESService {
-
-    @Autowired
-    UserLoginService userLoginService;
-
-    @Autowired
-    UserMapper userMapper;
 
     // Replace sender@example.com with your "From" address.
     // This address must be verified with Amazon SES.

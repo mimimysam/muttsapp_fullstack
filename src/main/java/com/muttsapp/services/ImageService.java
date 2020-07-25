@@ -2,6 +2,8 @@ package com.muttsapp.services;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -9,6 +11,7 @@ import com.amazonaws.services.s3.model.*;
 import com.muttsapp.NewMessageException;
 import com.muttsapp.tables.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
@@ -19,6 +22,11 @@ public class ImageService {
     @Autowired
     ChatService chatService;
 
+    @Value("${amazonProperties.accessKey}")
+    private String accessKey;
+    @Value("${amazonProperties.secretKey}")
+    private String secretKey;
+
     public void uploadFile(MultipartFile file, int chatId, int userId) throws IOException {
         Regions clientRegion = Regions.US_EAST_2;
         String bucketName = "muttsapp";
@@ -27,14 +35,12 @@ public class ImageService {
         String fileName = "/Users/mimisam/Desktop/" + file.getOriginalFilename();
 
         try {
-            //This code expects that you have AWS credentials set up per:
-            // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
+            BasicAWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
+
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion(clientRegion)
+                    .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                     .build();
-
-            // Upload a text string as a new object.
-            s3Client.putObject(bucketName, stringObjKeyName, "Uploaded String Object");
 
             // Upload a file as a new object with ContentType and title specified.
             PutObjectRequest request = new PutObjectRequest(bucketName, fileObjKeyName, convert(file))
