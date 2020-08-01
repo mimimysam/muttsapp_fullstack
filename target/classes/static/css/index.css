@@ -79,6 +79,24 @@ header {
     list-style-type: none;
 }
 
+#chat-name {
+    height: 100%;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header-main-icons {
+    height: 100%;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 #header-main-icons button {
     border: none;
     background-color: inherit;
@@ -223,7 +241,7 @@ header {
      position: relative;
      font-size: .95em;
      background-color: #ffffff;
-     margin-bottom: 4px;
+     margin-bottom: 5px;
 }
 
 .chat-bubble > p {

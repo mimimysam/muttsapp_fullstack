@@ -1,0 +1,323 @@
+* {
+    /* box-sizing: border-box; */
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family: American Typewriter, Helvetica, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
+/* ===============================================
+        Header Styles
+===============================================*/
+header {
+    height: 75px;
+    width: 100vw;
+    background-color: #ededed;
+    display: flex;
+}
+/* === Left side of the header ===*/
+#header-sidebar{
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-right: 1px solid grey;
+}
+
+#header-sidebar-icons{
+    height: 100%;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header-sidebar-icons ul {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+#header-sidebar-icons ul li{
+    list-style-type: none;
+}
+
+#header-sidebar-icons button {
+    border: none;
+    background-color: inherit;
+}
+
+/* === Right side of the header ===*/
+#header-main{
+    width: 60%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#header-main ul{
+    display: flex;
+}
+
+#header-main ul li{
+    list-style-type: none;
+}
+
+#chat-name {
+    height: 100%;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header-main-icons {
+    height: 100%;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#header-main-icons button {
+    border: none;
+    background-color: inherit;
+}
+
+.main-content {
+    width: 100vw;
+    height: calc(100vh - 75px);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* ===============================================
+    Styles for the sidebar section below
+===============================================*/
+
+.sidebar {
+    width: 40%;
+    height: 100%;
+}
+
+/* This is the wrap around the message previews */
+.sidebar > .message-preview-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    background-color: rgb(229, 221, 213, 0.9);
+    background: url('https://web.whatsapp.com/img/bg-chat-tile_9e8a2898faedb7db9bf5638405cf81ae.png');
+    z-index: -1;
+}
+
+/* These are individual message preview boxes */
+.message-preview-box {
+    background-color: #fff2f6;
+    border: 1px solid black;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.message-preview-box:hover {
+    background-color: #f5f5f5;
+}
+
+/* this will contain our chat icon image  */
+.img-wrap {
+    width: 15%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-wrap > img {
+    width: 49px;
+    height: 49px;
+    border-radius: 50%;
+}
+
+/* This div will contain the message senders name and the message preview */
+.message-text-wrap {
+    width: 65%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.message-text-wrap > p {
+    margin: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* This div will hold the date */
+.date-wrap {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+/* ===============================================
+        Main Chat Styling Section
+===============================================*/
+
+.main-chat {
+    width: 60%;
+    height: 100%;
+    background-color: rgb(229, 221, 213, 0.9);
+    display: inline-block;
+    overflow-y: auto;
+    position: relative;
+    min-height: 0;
+}
+
+.main-chat:after {
+    content: "";
+    background: url('https://web.whatsapp.com/img/bg-chat-tile_9e8a2898faedb7db9bf5638405cf81ae.png');
+    position: absolute;
+    opacity: 0.5;
+    top:0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+}
+
+/* Wrapper Around the main chat */
+
+#chat-scroll-wrapper {
+    height: calc(100% - 80px);
+    overflow-y: auto
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    overflow-y: scroll;
+    min-height: 0;
+}
+
+.chat-bubble {
+     padding: 6px 7px 8px 9px;
+     border-radius: 10px;
+     max-width: 75%;
+     position: relative;
+     font-size: .95em;
+     background-color: #ffffff;
+     margin-bottom: 5px;
+}
+
+.chat-bubble > p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.chat-bubble > img {
+    max-width: 100%;
+    height: auto
+}
+
+.chat-bubble:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: #9dfcb6;
+    margin-left: -10px;
+    margin-bottom: -20px;
+}
+
+.chat-bubble.in:before {
+    border-top-color: #ffffff;
+    left: 0;
+}
+
+.chat-bubble.in {
+    align-self: flex-start;
+}
+
+.chat-bubble.out {
+    background-color: #9dfcb6;
+    align-self: flex-end;
+}
+
+/* Section where new texts are inserted */
+.message-box {
+    width: 100%;
+    height: 80px;
+    background-color: #ededed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.message-box .form-wrap {
+    width: 700px;
+    height: 90%;
+    background-color: white;
+    border-radius: 20px;
+}
+
+.message-box .form-wrap form{
+    width: 80%;
+    height: 100%;
+    margin-left: 10%;
+}
+input[name="message"]{
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 10%;
+}
+
+.message-box button {
+    border: none;
+    background-color: inherit;
+}
+
+input::placeholder {
+    font-size: 15px;
+    font-style: italic;
+  }

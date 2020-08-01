@@ -1,6 +1,7 @@
 package com.muttsapp.services;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -22,24 +23,15 @@ public class ImageService {
     @Autowired
     ChatService chatService;
 
-    @Value("${amazonProperties.accessKey}")
-    private String accessKey;
-    @Value("${amazonProperties.secretKey}")
-    private String secretKey;
-
     public void uploadFile(MultipartFile file, int chatId, int userId) throws IOException {
         Regions clientRegion = Regions.US_EAST_2;
         String bucketName = "muttsapp";
-        String stringObjKeyName = file.getOriginalFilename();
         String fileObjKeyName = file.getOriginalFilename();
-        String fileName = "/Users/mimisam/Desktop/" + file.getOriginalFilename();
 
         try {
-            BasicAWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
 
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion(clientRegion)
-                    .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                     .build();
 
             // Upload a file as a new object with ContentType and title specified.
@@ -74,7 +66,9 @@ public class ImageService {
     }
 
     public static File convert(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
+        File convFile = new File(System.getProperty("java.io.tmpdir") +
+                System.getProperty("file.separator" ) +
+                file.getOriginalFilename());
         convFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(convFile);
         fos.write(file.getBytes());

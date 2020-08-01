@@ -1,7 +1,6 @@
 package com.muttsapp.config;
 
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/", "/home","/users/**","/registration", "/message/**").permitAll()
+				.antMatchers("/", "/home","/users/**","/registration").permitAll()
 //				.antMatchers("/users").hasRole("USER")
 				.anyRequest().authenticated()
 				.and().formLogin().loginPage("/login").permitAll()
