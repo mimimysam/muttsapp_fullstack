@@ -6,3 +6,4 @@ A WhatsApp replica with text and image messaging functionality, user registratio
 
 Java, SpringBoot, MyBatis, HTML/CSS, JavaScript, MySQL, AWS RDS, EC2, S3
 
+![alt text](https://github.com/mimimysam/muttsapp_fullstack/blob/master/muttsapp_screen_shot.png)
